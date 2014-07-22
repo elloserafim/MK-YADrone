@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="C:/Users/Ello/OneDrive/Documents/BATH/BSFwc/javaFramework/lib/smack/smack-3.4.1-0cec571.jar"/>
 	<classpathentry kind="lib" path="C:/opencv/build/java/opencv_java249.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV2.4.9"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
