@@ -9,7 +9,7 @@ import com.google.zxing.ResultPoint;
 import de.yadrone.apps.paperchase.PaperChase;
 import de.yadrone.apps.paperchase.TagListener;
 import de.yadrone.base.IARDrone;
-import de.yadrone.base.command.LEDAnimation;
+import de.yadrone.base.ardrone.command.LEDAnimation;
 
 public class PaperChaseAutoController extends PaperChaseAbstractController implements TagListener
 {

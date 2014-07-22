@@ -25,8 +25,8 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.zip.CRC32;
 
-import de.yadrone.base.command.CommandManager;
-import de.yadrone.base.command.DetectionType;
+import de.yadrone.base.ardrone.command.CommandManager;
+import de.yadrone.base.ardrone.command.DetectionType;
 import de.yadrone.base.exception.IExceptionListener;
 import de.yadrone.base.manager.AbstractManager;
 import de.yadrone.base.utils.ARDroneUtils;

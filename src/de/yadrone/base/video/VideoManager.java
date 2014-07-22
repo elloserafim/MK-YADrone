@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-import de.yadrone.base.command.CommandManager;
-import de.yadrone.base.command.VideoBitRateMode;
+import de.yadrone.base.ardrone.command.CommandManager;
+import de.yadrone.base.ardrone.command.VideoBitRateMode;
 import de.yadrone.base.exception.IExceptionListener;
 import de.yadrone.base.exception.VideoException;
 import de.yadrone.base.manager.AbstractTCPManager;

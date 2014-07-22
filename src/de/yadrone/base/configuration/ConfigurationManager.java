@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
-import de.yadrone.base.command.CommandManager;
-import de.yadrone.base.command.ControlCommand;
-import de.yadrone.base.command.ControlMode;
+import de.yadrone.base.ardrone.command.CommandManager;
+import de.yadrone.base.ardrone.command.ControlCommand;
+import de.yadrone.base.ardrone.command.ControlMode;
 import de.yadrone.base.exception.ConfigurationException;
 import de.yadrone.base.exception.IExceptionListener;
 import de.yadrone.base.manager.AbstractTCPManager;

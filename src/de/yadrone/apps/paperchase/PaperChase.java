@@ -5,7 +5,7 @@ import de.yadrone.apps.paperchase.controller.PaperChaseAutoController;
 import de.yadrone.apps.paperchase.controller.PaperChaseKeyboardController;
 import de.yadrone.base.ARDrone;
 import de.yadrone.base.IARDrone;
-import de.yadrone.base.command.VideoChannel;
+import de.yadrone.base.ardrone.command.VideoChannel;
 
 public class PaperChase 
 {

@@ -4,7 +4,7 @@ package de.yadrone.apps.controlcenter.plugins.keyboard;
 import java.awt.event.KeyEvent;
 
 import de.yadrone.base.IARDrone;
-import de.yadrone.base.command.FlightAnimation;
+import de.yadrone.base.ardrone.command.FlightAnimation;
 
 public class KeyboardCommandManagerAlternative extends KeyboardCommandManager
 {

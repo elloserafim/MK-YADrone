@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import de.yadrone.base.command.CommandManager;
-import de.yadrone.base.command.VideoChannel;
+import de.yadrone.base.ardrone.command.CommandManager;
+import de.yadrone.base.ardrone.command.VideoChannel;
 import de.yadrone.base.configuration.ConfigurationManager;
 import de.yadrone.base.exception.ARDroneException;
 import de.yadrone.base.exception.IExceptionListener;

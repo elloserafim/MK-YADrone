@@ -35,7 +35,7 @@ import com.xuggle.xuggler.ICodec;
 import de.yadrone.apps.controlcenter.CCPropertyManager;
 import de.yadrone.apps.controlcenter.ICCPlugin;
 import de.yadrone.base.IARDrone;
-import de.yadrone.base.command.VideoCodec;
+import de.yadrone.base.ardrone.command.VideoCodec;
 import de.yadrone.base.video.ImageListener;
 
 public class VideoPanel extends JPanel implements ICCPlugin, ImageListener

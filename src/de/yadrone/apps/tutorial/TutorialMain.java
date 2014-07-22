@@ -3,7 +3,7 @@ package de.yadrone.apps.tutorial;
 
 import de.yadrone.base.ARDrone;
 import de.yadrone.base.IARDrone;
-import de.yadrone.base.command.LEDAnimation;
+import de.yadrone.base.ardrone.command.LEDAnimation;
 import de.yadrone.base.exception.ARDroneException;
 import de.yadrone.base.exception.IExceptionListener;
 import de.yadrone.base.navdata.AttitudeListener;

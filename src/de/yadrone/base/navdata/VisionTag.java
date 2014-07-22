@@ -2,7 +2,7 @@ package de.yadrone.base.navdata;
 
 import java.util.Arrays;
 
-import de.yadrone.base.command.DetectionType;
+import de.yadrone.base.ardrone.command.DetectionType;
 
 public class VisionTag {
 

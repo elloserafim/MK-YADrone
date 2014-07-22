@@ -19,7 +19,7 @@ package de.yadrone.base;
 
 
 import de.yadrone.base.ARDrone.ISpeedListener;
-import de.yadrone.base.command.CommandManager;
+import de.yadrone.base.ardrone.command.CommandManager;
 import de.yadrone.base.configuration.ConfigurationManager;
 import de.yadrone.base.exception.IExceptionListener;
 import de.yadrone.base.navdata.NavDataManager;

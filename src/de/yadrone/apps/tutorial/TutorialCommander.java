@@ -1,8 +1,8 @@
 package de.yadrone.apps.tutorial;
 
 import de.yadrone.base.IARDrone;
-import de.yadrone.base.command.CommandManager;
-import de.yadrone.base.command.LEDAnimation;
+import de.yadrone.base.ardrone.command.CommandManager;
+import de.yadrone.base.ardrone.command.LEDAnimation;
 
 public class TutorialCommander
 {
