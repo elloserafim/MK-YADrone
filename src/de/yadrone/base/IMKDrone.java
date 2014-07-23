@@ -1,5 +1,9 @@
 package de.yadrone.base;
 
-public interface IMKDrone {
+import de.yadrone.base.manager.SerialCommandManager;
 
+public interface IMKDrone {
+	public SerialCommandManager getSerialCommandManager();
+
+	public void takeoff();
 }
