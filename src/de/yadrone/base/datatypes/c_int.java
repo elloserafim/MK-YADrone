@@ -6,16 +6,21 @@ import java.util.LinkedList;
  * Base datatype class. c_int objects are used as parameter in MK commands.
  * This class is useful to give properties and attributes to MKCommand parameters and add functions,
  * such as mapping the parameters to byte arrays.
- * @author Ello Oliveira
+ * @author Ello Oliveira and Diogo Branco
  */
 public class c_int {
-	public boolean signed;
-	public String name; //The name the c_int has when used as a parameter
-    public int length = 0;
-    public long value = 0;
-    public Integer minValue;
-    public Integer maxValue;
-    public LinkedList<c_int> allAttribs = null;
+	protected boolean signed;
+	protected String name; //The name the c_int has when used as a parameter
+	protected int length;
+	protected long value;
+	protected Integer minValue;
+	protected Integer maxValue;
+	protected LinkedList<c_int> allAttribs = null;
+	
+	public c_int() {
+		this.length = 0;
+		this.value = 0;
+	}
     
     /**
      * @return The values of all attributes in a int[]
@@ -58,6 +63,68 @@ public class c_int {
             ret[i] = b[i - a.length];
         }
         return ret;
+    }
+    
+    public void loadFromInt(int RxdBuffer[], int pRxData) {
+        if (allAttribs != null && allAttribs.size() > 0) {
+            int offset = 0;
+            for (c_int c : allAttribs) {
+                c.loadFromInt(RxdBuffer, pRxData + offset);
+                offset += c.getLength() / 8;
+            }
+        } else {
+            long v = 0;
+            if (pRxData + (getLength() / 8) <= RxdBuffer.length) {
+                for (int i = (length / 8) - 1; i >= 0; i--) {
+                    v <<= 8;
+                    v |= RxdBuffer[i + pRxData];
+                }
+                //TODO: signed!!!!
+                if (signed) {
+                    long signmask = 1 << (getLength() - 1);
+                    long signbit = ((v & signmask) != 0) ? 1 : 0;
+                    v &= ~signmask;
+//                    long newsignmask = signbit << 63;
+//                    v = v | newsignmask;
+                    if (signbit == 1) {
+                        v = v + getMin();
+                    }
+                }
+                value = v;
+            }
+        }
+
+    }
+    
+    public int getMin() {
+        if (!signed) {
+            return 0;
+        } else {
+            if (minValue != null) {
+                return minValue.intValue();
+            }
+            return (int) -(Math.pow(2, length - 1));
+        }
+    }
+    
+    public int getLength() {
+        if (allAttribs == null) {
+            return length;
+        } else {
+            int len = 0;
+            for (c_int c : allAttribs) {
+                len += c.getLength();
+            }
+            return len;
+        }
+    }
+    
+    public long getValue() {
+    	return value;
+    }
+    
+    public void setValue(long value) {
+    	this.value = value;
     }
 
 }

@@ -75,6 +75,20 @@ public class Encoder {
 
     }
     
+	/**
+	 * 
+	 * @param modul
+	 * @param cmd
+	 * @param params
+	 * 
+	 * @author Marcus -LiGi- Bueschleb
+	 *         http://github.com/ligi/DUBwise/blob/master
+	 *         /shared/src/org/ligi/ufo/MKCommunicator.java
+	 */
+	public void sendCommand(int modul, char cmd, int[] params) {
+		sendCommandNoCheck((byte) modul, cmd, params);
+	}
+    
     /**
      * Encodes and sends a MK Command
      * @param address NC or FC address
