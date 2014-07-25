@@ -7,16 +7,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 import de.yadrone.base.mkdrone.command.Encoder;
-import de.yadrone.base.mkdrone.navdata.SerialEventListener;
 
 /**
  * This abstract class contain attributes and methods common to both SerialCommandManager and SerialNavManager. 
  * Attributes and methods in this class are necessary for Serial Communication 
  * @author Ello Oliveira
  */
-public abstract class SerialAbstractManager implements Runnable{
+public abstract class SerialAbstractManager implements Runnable, Observer {
 	
 	/*
 	 * MK commands is sent to one of the Mikrokopter components. Here are their addresses:
@@ -36,6 +37,7 @@ public abstract class SerialAbstractManager implements Runnable{
 	protected InputStream inputStream;
 	protected Encoder enconder;
 	protected boolean isUSB;
+	protected int[] buffer;
 	
 	protected static HashMap<String, CommPortIdentifier> portMap;
 	
@@ -77,6 +79,8 @@ public abstract class SerialAbstractManager implements Runnable{
 			this.serialPort.notifyOnOutputEmpty(true);
 		}
 		this.isUSB = isUSB;
+		enconder = new Encoder(outputStream);
+//		buffer = new int[SerialEventListener.MAX_EMPFANGS_BUFF];
 	}
 	
 	public SerialPort getSerialPort() {
@@ -85,6 +89,13 @@ public abstract class SerialAbstractManager implements Runnable{
 	
 	public boolean isUSB() {
 		return isUSB;
+	}
+	
+	public void update(Observable o, Object arg) {
+		buffer = (int[]) arg;
+		synchronized (this) {
+			notify();
+		}
 	}
 	
 //	public void start() {

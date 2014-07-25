@@ -4,7 +4,6 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
-import de.yadrone.base.mkdrone.navdata.SerialEventListener;
 
 
 import java.io.IOException;
@@ -21,6 +20,9 @@ import de.yadrone.base.mkdrone.command.FCCommand;
  * @author Ello Oliveira 
  *
  */
+
+// [DPPB]: This class should be placed under de.yadrone.base.mkdrone.command, in accordance
+// with YADrone's design.
 public class SerialCommandManager extends SerialAbstractManager implements Runnable {
 	
 	static CommPortIdentifier portId;
@@ -34,7 +36,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	public SerialCommandManager(String serialPort, boolean isUSB, 
 			SerialEventListener serialListener) throws Exception {
 		 	super(serialPort, isUSB, serialListener);
-		 	this.enconder = new Encoder(outputStream);
 		 }
 
 /*    public static HashMap<String, CommPortIdentifier> getPorts() {
@@ -109,6 +110,9 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		}
 	}
 	*/
+    
+    // [DPPB]: This method is not necessary. See comment on SerialAbstractManager
+    // for details
     public void initWriteToPort() {
         // initwritetoport() assumes that the port has already been opened and
         //    initialized by "public nulltest()"

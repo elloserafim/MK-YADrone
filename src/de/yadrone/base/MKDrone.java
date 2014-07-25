@@ -2,7 +2,7 @@ package de.yadrone.base;
 
 import de.yadrone.base.ardrone.command.CommandManager;
 import de.yadrone.base.manager.SerialCommandManager;
-import de.yadrone.base.mkdrone.navdata.SerialEventListener;
+import de.yadrone.base.manager.SerialEventListener;
 import de.yadrone.base.mkdrone.navdata.SerialNavManager;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 
@@ -39,7 +39,6 @@ public class MKDrone implements IMKDrone {
 	}
 
 
-	@Override
 	public void start() {
 		try {
 			getSerialCommandManager();
@@ -50,7 +49,6 @@ public class MKDrone implements IMKDrone {
 		
 	}
 
-	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
 		serialCommManager.stop();

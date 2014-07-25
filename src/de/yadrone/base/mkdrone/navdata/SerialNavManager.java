@@ -4,10 +4,11 @@ import java.util.ArrayList;
 
 import de.yadrone.base.manager.SerialAbstractManager;
 import de.yadrone.base.manager.SerialCommandManager;
+import de.yadrone.base.manager.SerialEventListener;
 
 public class SerialNavManager extends SerialAbstractManager {
 
-	private SerialCommandManager manager; 
+	private SerialCommandManager manager;
 	
 	private ArrayList<NCAnalogListener> ncAnalogListener;
 	
@@ -23,8 +24,19 @@ public class SerialNavManager extends SerialAbstractManager {
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		try {
+			while (true) {
+				synchronized (this) {
+					while (buffer == null) {
+						this.wait();
+					}
+				}
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			buffer = null;
+		}
 	}
 
 }
