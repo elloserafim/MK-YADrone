@@ -53,7 +53,8 @@ public class str_ExternControl extends c_int  {
     allAttribs.add(free);
     frame = new u8("Frame");
     allAttribs.add(frame);
-    config = new u8("Config", 1);
+    config = new u8("Config");
+    config.value = 1;
     allAttribs.add(config);
 }
     

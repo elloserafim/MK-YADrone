@@ -4,6 +4,8 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
+import de.yadrone.base.mkdrone.navdata.SerialEventListener;
+
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,8 +27,17 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
     static HashMap<String, CommPortIdentifier> portMap;
     private boolean isUSB;
 	protected Thread thread = null;
+	
+	public SerialCommandManager(SerialEventListener serialListener) throws Exception {
+		 this(null, false, serialListener);
+	}
+	public SerialCommandManager(String serialPort, boolean isUSB, 
+			SerialEventListener serialListener) throws Exception {
+		 	super(serialPort, isUSB, serialListener);
+		 	this.enconder = new Encoder(outputStream);
+		 }
 
-    public static HashMap<String, CommPortIdentifier> getPorts() {
+/*    public static HashMap<String, CommPortIdentifier> getPorts() {
         if (portMap == null) {
             portMap = new HashMap<String, CommPortIdentifier>();
             Enumeration portList = CommPortIdentifier.getPortIdentifiers();
@@ -38,15 +49,15 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
             }
         }
         return portMap;
-    }
+    }*/
     
     public void setOutputStream(OutputStream out){
     	outputStream = out;
     }
 	
-	public SerialCommandManager(boolean isUSB, String port) 
+/*	public SerialCommandManager(boolean isUSB, String port) 
 	{
-		getPorts();
+		//getPorts();
 
 		this.isUSB = isUSB; 
 		String defaultPort;
@@ -84,8 +95,8 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 			e.printStackTrace();
 		}
         
-        initWriteToPort();
-		this.enconder = new Encoder(outputStream);
+     //   initWriteToPort();
+	//	this.enconder = new Encoder(outputStream);
         
         // set port parameters
         try {
@@ -97,7 +108,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 			e.printStackTrace();
 		}
 	}
-	
+	*/
     public void initWriteToPort() {
         // initwritetoport() assumes that the port has already been opened and
         //    initialized by "public nulltest()"

@@ -10,7 +10,12 @@ public class TutorialSerialCommander {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MKDrone drone = null;
-		drone = new MKDrone();
+		try {
+			drone = new MKDrone();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try{
 		drone.start();
