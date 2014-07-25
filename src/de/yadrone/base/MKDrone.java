@@ -1,6 +1,8 @@
 package de.yadrone.base;
 
+import de.yadrone.base.ardrone.command.CommandManager;
 import de.yadrone.base.manager.SerialCommandManager;
+import de.yadrone.base.mkdrone.command.ExternControlCommand;
 
 /**
  * @author Ello Oliveira
@@ -14,14 +16,23 @@ public class MKDrone implements IMKDrone {
 	@Override
 	public SerialCommandManager getSerialCommandManager() {
 		if(serialCommManager == null){
-			serialCommManager = new SerialCommandManager();
+			serialCommManager = new SerialCommandManager(false, "COM4");
 		}
 		return serialCommManager;
 	}
 
+
 	@Override
-	public void takeoff() {
+	public void start() {
+		getSerialCommandManager();
+		
+	}
+
+	@Override
+	public void stop() {
 		// TODO Auto-generated method stub
+		serialCommManager.stop();
+		
 		
 	}
 

@@ -6,6 +6,14 @@ public class s8 extends c_int {
         length = 8;
         this.name = name;
     }
+    
+    public s8(String name, long value) {
+        signed = true;
+        length = 8;
+        this.name = name;
+        this.value = value;
+    }
+    
     public s8(String name,int minValue,int maxValue) {
         signed = true;
         length = 8;

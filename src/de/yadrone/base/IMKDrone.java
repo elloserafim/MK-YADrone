@@ -5,5 +5,10 @@ import de.yadrone.base.manager.SerialCommandManager;
 public interface IMKDrone {
 	public SerialCommandManager getSerialCommandManager();
 
-	public void takeoff();
+	/**
+	 * Initialises the SerialCommandManager for the drone.
+	 */
+	public void start();
+	public void stop();
+	
 }

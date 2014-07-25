@@ -133,7 +133,10 @@ public class Encoder {
 
 
             } catch (Exception e) { // problem sending data to FC
+            	System.out.println("Problem sending data");
             }
+            System.out.println("Data Sent!");
         }
+
     
 }

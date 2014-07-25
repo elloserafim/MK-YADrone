@@ -1,5 +1,10 @@
 package de.yadrone.base.mkdrone.command;
 
+import de.yadrone.base.manager.SerialAbstractManager;
+
 public class FCCommand extends MKCommand {
-	private int address = 1;
+	
+	public FCCommand(){
+		address = SerialAbstractManager.FC_ADDRESS;
+	}
 }
