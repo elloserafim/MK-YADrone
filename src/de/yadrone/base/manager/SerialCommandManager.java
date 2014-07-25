@@ -38,106 +38,12 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		 	super(serialPort, isUSB, serialListener);
 		 }
 
-/*    public static HashMap<String, CommPortIdentifier> getPorts() {
-        if (portMap == null) {
-            portMap = new HashMap<String, CommPortIdentifier>();
-            Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-            while (portList.hasMoreElements()) {
-                portId = (CommPortIdentifier) portList.nextElement();
-                if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                    portMap.put(portId.getName(), portId);
-                }
-            }
-        }
-        return portMap;
-    }*/
+
     
     public void setOutputStream(OutputStream out){
     	outputStream = out;
     }
 	
-/*	public SerialCommandManager(boolean isUSB, String port) 
-	{
-		//getPorts();
-
-		this.isUSB = isUSB; 
-		String defaultPort;
-		String osname = System.getProperty("os.name", "").toLowerCase();
-        if (osname.startsWith("windows")) {
-            // windows
-            defaultPort = "COM1";
-        } else if (osname.startsWith("linux")) {
-            // linux
-            defaultPort = "/dev/ttyS0";
-        } else if (osname.startsWith("mac")) {
-            // mac
-            defaultPort = "????";
-        } else {
-            System.out.println("Sorry, your operating system is not supported");
-            return;
-        }
-        
-        if (port!=null)
-        	defaultPort = port;
-        	
-        
-        
-        if (!portMap.keySet().contains(defaultPort)) {
-            System.out.println("port " + defaultPort + " not found.");
-            System.exit(0);
-        }
-        
-        portId = portMap.get(defaultPort);
-        try {
-			serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
-		} catch (PortInUseException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Port" + defaultPort + " already in use");
-			e.printStackTrace();
-		}
-        
-     //   initWriteToPort();
-	//	this.enconder = new Encoder(outputStream);
-        
-        // set port parameters
-        try {
-			serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8,
-			        SerialPort.STOPBITS_1,
-			        SerialPort.PARITY_NONE);
-		} catch (UnsupportedCommOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	*/
-    
-    // [DPPB]: This method is not necessary. See comment on SerialAbstractManager
-    // for details
-    public void initWriteToPort() {
-        // initwritetoport() assumes that the port has already been opened and
-        //    initialized by "public nulltest()"
-
-        try {
-            // get the outputstream
-            outputStream = serialPort.getOutputStream();
-        } catch (IOException e) {
-        }
-
-        try {
-            // activate the OUTPUT_BUFFER_EMPTY notifier
-            // DISABLE for USB
-            //System.out.println(serialPort.getName());
-            if (!isUSB) {
-                serialPort.notifyOnOutputEmpty(true);
-            }
-        } catch (Exception e) {
-            System.out.println("Error setting event notification");
-            System.out.println(e.toString());
-            System.exit(-1);
-        }
-
-    }
-
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub

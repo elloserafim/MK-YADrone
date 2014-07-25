@@ -19,7 +19,7 @@ public class TutorialSerialCommander {
 		
 		try{
 		drone.start();
-	//	drone.getSerialCommandManager().setOutputStream(System.out);
+		drone.getSerialCommandManager().setOutputStream(System.out);
 		drone.getSerialCommandManager().takeoff();
 		}catch(Exception e){
 			e.printStackTrace();

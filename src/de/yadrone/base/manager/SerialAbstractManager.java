@@ -63,7 +63,16 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
         	throw new Exception("No serial ports were found.");
         }
 		if(serialPort == null) {
+			int i = 0;
 			serialPort = (String) portMap.keySet().toArray()[0];
+			CommPortIdentifier pId = portMap.get(serialPort);
+			while(pId.isCurrentlyOwned() && i< portMap.size()){
+				serialPort = (String) portMap.keySet().toArray()[++i];
+				pId = portMap.get(serialPort);
+			}
+			if(pId.isCurrentlyOwned() && i>= portMap.size()){
+				throw new Exception("All Serial ports are in use.");
+			}
 		} else if(!portMap.keySet().contains(serialPort)) {
 			// TODO: SerialPortNotFoundException
 			throw new Exception("Serial port not found.");
