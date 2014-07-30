@@ -17,7 +17,7 @@ import de.yadrone.base.mkdrone.command.FCCommand;
 
 /**
  * The manager for Serial Communication with MKDrone
- * @author Ello Oliveira 
+ * @author Ello Oliveira and Diogo Branco
  *
  */
 
@@ -37,6 +37,9 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	public SerialCommandManager(String serialPort, boolean isUSB,
 			SerialEventListener serialListener) throws Exception {
 		super(serialPort, isUSB, serialListener);
+		if(serialListener.getInputStream() == null) {
+			serialListener.setInputStream(this.serialPort.getInputStream());
+		}
 	}
     
     public void setOutputStream(OutputStream out){
@@ -59,12 +62,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		// TODO Auto-generated method stub
 		int[]params = cmd.getParam().getAsInt();
 		this.enconder.sendCommandNoCheck((byte)cmd.getAddress(), cmd.getId(), params);
-	}
-
-	public void stop() {
-		// TODO Auto-generated method stub
-		serialPort.close();
-		
 	}
 
 }

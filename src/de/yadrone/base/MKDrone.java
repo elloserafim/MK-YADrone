@@ -45,17 +45,12 @@ public class MKDrone implements IMKDrone {
 		try {
 			getSerialCommandManager();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	public void stop() {
-		// TODO Auto-generated method stub
 		serialCommManager.stop();
-		
-		
 	}
 
 }

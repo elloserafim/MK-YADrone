@@ -1,5 +1,8 @@
 package de.yadrone.base.manager;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Observable;
 
 import gnu.io.SerialPortEvent;
@@ -21,6 +24,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 	private int crc2;
 	private int buf_ptr = 0;
 	private UART_CONNECTION UART;
+	private InputStream inputStream;
 	
 	public static final int MAX_EMPFANGS_BUFF = 190;
 
@@ -34,7 +38,34 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		if (!NeuerDatensatzEmpfangen) {
 			return;
 		}
+		int pRxData = 3; // decoded data start at the 4th byte
 		Decode64(RxdBuffer);
+		System.out.print("Decoded data: ");
+		for(int i = 0; i < RxdBuffer.length; ++i) {
+			System.out.print(RxdBuffer[i]);
+		}
+		System.out.println();
+		switch (UART) {
+		case NC:
+			switch (RxdBuffer[1] - 'a') {
+			case SerialAbstractManager.NC_ADDRESS:
+				switch (RxdBuffer[2]) {
+				case 'A': // NCAnalog data
+					System.out.println(RxdBuffer[pRxData]);
+					char[] name = new char[16];
+					for(int i = 1; i < 17; ++i) {
+						name[i-1] = (char) RxdBuffer[pRxData+i];
+					}
+					System.out.println(new String(name));
+					
+				}
+				// "break;" is missing here to fall thru to the common commands
+			default:
+			}
+			break;
+		case FC:
+			break;
+		}
 	}
 	
 	public void Decode64(int[] RxdBuffer) {// die daten werden im rx buffer dekodiert, das geht nur, weil aus 4 byte immer 3 gemacht werden.
@@ -80,6 +111,14 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
         }
     }
 	
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+	
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+	
 	private void USART0_RX_vect(int SioTmp) {
 		
 		boolean CrcOkay = false;
@@ -116,6 +155,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
                 
                 hasChanged();
                 notifyObservers(RxdBuffer);
+                interpretData();
 
             } else {
                 System.out.println("NeuerDatensatzEmpfangen: " + NeuerDatensatzEmpfangen + " CrcOkay: " + CrcOkay);
@@ -157,7 +197,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 					&& (data[i] == 0x1B && data[i + 1] == 0x1B
 							&& data[i + 2] == 0x55 /* && data[i + 3] == 170 */&& data[i + 4] == 0x00)) {
 				i += 4;
-//				DataStorage.setUART(DataStorage.UART_CONNECTION.NC);
+				setUART(UART_CONNECTION.NC);
 				UartState = 0;
 			} else {
 				USART0_RX_vect((char) data[i]);
@@ -165,6 +205,8 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		}
 	}
 
+	byte[] readBuffer = new byte[220];
+	
 	/**
     *
     * @param event
@@ -187,19 +229,19 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
                break;
            case SerialPortEvent.DATA_AVAILABLE:
-//               try {
-//                   while (inputStream.available() > 0) {
-//
-//                       Arrays.fill(readBuffer, (byte) 0);
-//                       int numBytes = inputStream.read(readBuffer);
-//                       byte[] data = Arrays.copyOfRange(readBuffer, 0, numBytes);
+               try {
+                   while (inputStream.available() > 0) {
+                	   System.out.println("New data received.");
+                       Arrays.fill(readBuffer, (byte) 0);
+                       int numBytes = inputStream.read(readBuffer);
+                       byte[] data = Arrays.copyOfRange(readBuffer, 0, numBytes);
 ////       System.out.println(Hex.encodeHexString(readBuffer));
 ////       System.out.println(Hex.encodeHexString(data));
 //
-//                       HandleInputData(data);
-//                   }
-//               } catch (IOException ex) {
-//               }
+                       HandleInputData(data);
+                   }
+               } catch (IOException ex) {
+               }
                break;
        }
    }

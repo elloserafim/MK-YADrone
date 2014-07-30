@@ -20,6 +20,9 @@ public class SerialNavManager extends SerialAbstractManager {
 			SerialEventListener serialListener, SerialCommandManager manager) throws Exception {
 		super(serialPort, isUSB, serialListener);
 		this.manager = manager;
+		if(serialListener.getInputStream() == null) {
+			serialListener.setInputStream(this.serialPort.getInputStream());
+		}
 	}
 	
 	@Override
