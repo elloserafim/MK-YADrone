@@ -12,9 +12,9 @@ public class SerialNavManager extends SerialAbstractManager {
 	
 	private ArrayList<NCAnalogListener> ncAnalogListener;
 	
-//	public SerialNavManager(SerialEventListener serialListener, SerialCommandManager manager) {
-//		this(manager.getSerialPort(), manager.isUSB(), serialListener, manager);
-//	}
+	public SerialNavManager(SerialCommandManager manager) throws Exception {
+		super(manager.getSerialPort(), manager.isUSB());
+	}
 	
 	public SerialNavManager(String serialPort, boolean isUSB,
 			SerialEventListener serialListener, SerialCommandManager manager) throws Exception {

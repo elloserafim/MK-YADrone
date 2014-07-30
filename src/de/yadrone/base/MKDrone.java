@@ -1,10 +1,8 @@
 package de.yadrone.base;
 
-import de.yadrone.base.ardrone.command.CommandManager;
 import de.yadrone.base.manager.SerialCommandManager;
 import de.yadrone.base.manager.SerialEventListener;
 import de.yadrone.base.mkdrone.navdata.SerialNavManager;
-import de.yadrone.base.mkdrone.command.ExternControlCommand;
 
 /**
  * @author Ello Oliveira
@@ -19,13 +17,17 @@ public class MKDrone implements IMKDrone {
 	private static SerialEventListener serialEventListener;
 
 	public MKDrone() throws Exception {
-		this(null);
+		this(null, true);
 	}
 	
-	public MKDrone(String serialPort) throws Exception {
+	public MKDrone(String serialPort, boolean isUSB) throws Exception {
 		serialEventListener = new SerialEventListener();
-		serialCommManager = new SerialCommandManager(serialEventListener);
-		serialNavManager = new SerialNavManager(serialPort, false, serialEventListener, serialCommManager);
+		if(serialPort == null) {
+			serialCommManager = new SerialCommandManager(isUSB, serialEventListener);
+		} else {
+			serialCommManager = new SerialCommandManager(serialPort, isUSB, serialEventListener);
+		}
+		serialNavManager = new SerialNavManager(serialCommManager);
 	}
 	
 	@Override

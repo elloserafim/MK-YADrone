@@ -41,9 +41,14 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	
 	protected static HashMap<String, CommPortIdentifier> portMap;
 	
-	public SerialAbstractManager(SerialPort serialPort, boolean isUSB, SerialEventListener serialListener) throws Exception {
-		
+	public SerialAbstractManager(SerialPort serialPort, boolean isUSB) throws Exception {
+		this.serialPort = serialPort;
+		inputStream = serialPort.getInputStream();
+		outputStream = serialPort.getOutputStream();
+		this.isUSB = isUSB;
+		enconder = new Encoder(outputStream);
 	}
+	
 	// A merge of SerialComm constructor, getPorts() and initwritetoport() from "de.mylifesucks.oss.ncsimulator.
 	// protocol.SerialComm.java" with some improvements.
 	public SerialAbstractManager(String serialPort, boolean isUSB, SerialEventListener serialListener) throws Exception {
@@ -91,6 +96,21 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 		enconder = new Encoder(outputStream);
 //		buffer = new int[SerialEventListener.MAX_EMPFANGS_BUFF];
 	}
+	
+	public static HashMap<String, CommPortIdentifier> getPorts() {
+        if (portMap == null) {
+            portMap = new HashMap<String, CommPortIdentifier>();
+            Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+            CommPortIdentifier portId;
+            while (portList.hasMoreElements()) {
+                portId = (CommPortIdentifier) portList.nextElement();
+                if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                    portMap.put(portId.getName(), portId);
+                }
+            }
+        }
+        return portMap;
+    }
 	
 	public SerialPort getSerialPort() {
 		return serialPort;

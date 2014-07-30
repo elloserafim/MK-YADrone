@@ -27,18 +27,17 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	
 	static CommPortIdentifier portId;
     static HashMap<String, CommPortIdentifier> portMap;
-    private boolean isUSB;
 	protected Thread thread = null;
 	
-	public SerialCommandManager(SerialEventListener serialListener) throws Exception {
-		 this(null, false, serialListener);
+	public SerialCommandManager(boolean isUSB, SerialEventListener serialListener)
+			throws Exception {
+		this(null, isUSB, serialListener);
 	}
-	public SerialCommandManager(String serialPort, boolean isUSB, 
+
+	public SerialCommandManager(String serialPort, boolean isUSB,
 			SerialEventListener serialListener) throws Exception {
-		 	super(serialPort, isUSB, serialListener);
-		 }
-
-
+		super(serialPort, isUSB, serialListener);
+	}
     
     public void setOutputStream(OutputStream out){
     	outputStream = out;

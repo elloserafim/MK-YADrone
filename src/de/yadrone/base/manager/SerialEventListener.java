@@ -34,7 +34,6 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		if (!NeuerDatensatzEmpfangen) {
 			return;
 		}
-		
 		Decode64(RxdBuffer);
 	}
 	
