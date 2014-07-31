@@ -127,9 +127,9 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 		}
 	}
 	
-	public void stop() {
+/*	public void stop() {
 		serialPort.close();
-	}
+	}*/
 	
 //	public void start() {
 //		if (thread == null || thread.getState() == Thread.State.TERMINATED) {

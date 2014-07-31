@@ -43,7 +43,7 @@ public class MKDrone implements IMKDrone {
 
 	public void start() {
 		try {
-			getSerialCommandManager();
+			getSerialCommandManager().start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -51,6 +51,15 @@ public class MKDrone implements IMKDrone {
 
 	public void stop() {
 		serialCommManager.stop();
+	}
+
+	@Override
+	public void takeOff() {
+		// TODO Auto-generated method stub
+		if(serialCommManager !=null){
+			serialCommManager.takeoff();
+		}
+		
 	}
 
 }
