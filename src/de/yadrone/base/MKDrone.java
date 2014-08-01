@@ -14,20 +14,20 @@ public class MKDrone implements IMKDrone {
 	private SerialCommandManager serialCommManager;
 	private SerialNavManager serialNavManager;
 	
-	private static SerialEventListener serialEventListener;
+	private static SerialEventListener serialListener;
 
 	public MKDrone() throws Exception {
 		this(null, true);
 	}
 	
 	public MKDrone(String serialPort, boolean isUSB) throws Exception {
-		serialEventListener = new SerialEventListener();
+		serialListener = new SerialEventListener();
 		if(serialPort == null) {
-			serialCommManager = new SerialCommandManager(isUSB, serialEventListener);
+			serialCommManager = new SerialCommandManager(isUSB, serialListener);
 		} else {
-			serialCommManager = new SerialCommandManager(serialPort, isUSB, serialEventListener);
+			serialCommManager = new SerialCommandManager(serialPort, isUSB, serialListener);
 		}
-		serialNavManager = new SerialNavManager(serialCommManager);
+		serialNavManager = new SerialNavManager(serialCommManager, serialListener);
 	}
 	
 	@Override

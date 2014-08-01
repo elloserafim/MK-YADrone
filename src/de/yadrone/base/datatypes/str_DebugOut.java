@@ -18,10 +18,23 @@ public class str_DebugOut extends c_int {
 
     public u8 Status[] = new u8[2];
     public s16Debug Analog[] = new s16Debug[32];    // Debug values
-    int ADDRESS;
+    private int address;
+    
+    public str_DebugOut(int RxdBuffer[], int pRxData) {
+    	allAttribs = new LinkedList<c_int>();
+    	for (int i = 0; i < Status.length; i++) {
+            Status[i] = new u8();
+            allAttribs.add(Status[i]);
+        }
+    	for (int i = 0; i < Analog.length; i++) {
+            Analog[i] = new s16Debug();
+            allAttribs.add(Analog[i]);
+        }
+    	loadFromInt(RxdBuffer, pRxData);
+    }
 
     public str_DebugOut(String prefix, int ADDRESS) {
-        this.ADDRESS = ADDRESS;
+        this.address = ADDRESS;
         allAttribs = new LinkedList<c_int>();
 
         for (int i = 0; i < Status.length; i++) {
@@ -40,5 +53,9 @@ public class str_DebugOut extends c_int {
 //        for (c_int c : allAttribs) {
 //            DataStorage.addToSerializePool(c);
 //        }
+    }
+    
+    public void setAddress(int address) {
+    	this.address = address;
     }
 };

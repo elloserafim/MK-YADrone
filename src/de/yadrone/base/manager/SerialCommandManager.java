@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Observable;
 
 import de.yadrone.base.mkdrone.command.Encoder;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
@@ -61,7 +62,13 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	private void sendCommand(FCCommand cmd) {
 		// TODO Auto-generated method stub
 		int[]params = cmd.getParam().getAsInt();
-		this.enconder.sendCommandNoCheck((byte)cmd.getAddress(), cmd.getId(), params);
+		this.encoder.sendCommandNoCheck((byte)cmd.getAddress(), cmd.getId(), params);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

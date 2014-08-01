@@ -97,7 +97,7 @@ public class Encoder {
      * @author  Marcus -LiGi- Bueschleb
      * http://github.com/ligi/DUBwise/blob/master/shared/src/org/ligi/ufo/MKCommunicator.java
      */
-    public synchronized void sendCommandNoCheck(byte address, char cmdId, int[] params) {
+    public void sendCommandNoCheck(byte address, char cmdId, int[] params) {
     	
     	
 
@@ -122,18 +122,15 @@ public class Encoder {
                 for (int tmp_i = 0; tmp_i < send_buff.length; tmp_i++) {
                     tmp_crc += (int) send_buff[tmp_i];
                 }
-
-
-
-                writer.write(send_buff, 0, send_buff.length);
                 tmp_crc %= 4096;
 
-
-
-                writer.write((char) (tmp_crc / 64 + '='));
-                writer.write((char) (tmp_crc % 64 + '='));
-                writer.write('\r');
-                writer.flush();
+                synchronized (writer) {
+	                writer.write(send_buff, 0, send_buff.length);
+	                writer.write((char) (tmp_crc / 64 + '='));
+	                writer.write((char) (tmp_crc % 64 + '='));
+	                writer.write('\r');
+	                writer.flush();
+                }
 
 
                 String out = "";

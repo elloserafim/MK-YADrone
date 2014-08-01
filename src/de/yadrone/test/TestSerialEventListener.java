@@ -51,7 +51,8 @@ public class TestSerialEventListener extends Thread {
 						SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 				serialPort.notifyOnOutputEmpty(true);
 				Encoder encoder = new Encoder(serialPort.getOutputStream());
-				encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'a', new u8(1).getAsInt());
+//				encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'a', new u8(1).getAsInt());
+				encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'd', new u8(100).getAsInt());
 			}
 		} catch (PortInUseException e) {
 			e.printStackTrace();

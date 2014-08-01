@@ -35,18 +35,18 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	protected SerialPort serialPort;
 	protected OutputStream outputStream;
 	protected InputStream inputStream;
-	protected Encoder enconder;
+	protected Encoder encoder;
 	protected boolean isUSB;
-	protected int[] buffer;
 	
 	protected static HashMap<String, CommPortIdentifier> portMap;
 	
-	public SerialAbstractManager(SerialPort serialPort, boolean isUSB) throws Exception {
+	public SerialAbstractManager(SerialPort serialPort, boolean isUSB, SerialEventListener serialListener) throws Exception {
 		this.serialPort = serialPort;
 		inputStream = serialPort.getInputStream();
 		outputStream = serialPort.getOutputStream();
 		this.isUSB = isUSB;
-		enconder = new Encoder(outputStream);
+		encoder = new Encoder(outputStream);
+		serialListener.addObserver(this);
 	}
 	
 	// A merge of SerialComm constructor, getPorts() and initwritetoport() from "de.mylifesucks.oss.ncsimulator.
@@ -93,7 +93,8 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 			this.serialPort.notifyOnOutputEmpty(true);
 		}
 		this.isUSB = isUSB;
-		enconder = new Encoder(outputStream);
+		encoder = new Encoder(outputStream);
+		serialListener.addObserver(this);
 //		buffer = new int[SerialEventListener.MAX_EMPFANGS_BUFF];
 	}
 	
@@ -120,12 +121,12 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 		return isUSB;
 	}
 	
-	public void update(Observable o, Object arg) {
-		buffer = (int[]) arg;
-		synchronized (this) {
-			notify();
-		}
-	}
+//	public void update(Observable o, Object arg) {
+//		buffer = (int[]) arg;
+//		synchronized (this) {
+//			notify();
+//		}
+//	}
 	
 	public void stop() {
 		serialPort.close();

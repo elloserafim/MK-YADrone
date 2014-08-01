@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Observable;
 
+import de.yadrone.base.datatypes.str_DebugOut;
+
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
@@ -49,18 +51,24 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		case NC:
 			switch (RxdBuffer[1] - 'a') {
 			case SerialAbstractManager.NC_ADDRESS:
-				switch (RxdBuffer[2]) {
-				case 'A': // NCAnalog data
-					System.out.println(RxdBuffer[pRxData]);
-					char[] name = new char[16];
-					for(int i = 1; i < 17; ++i) {
-						name[i-1] = (char) RxdBuffer[pRxData+i];
-					}
-					System.out.println(new String(name));
-					
-				}
-				// "break;" is missing here to fall thru to the common commands
+				// "break;" is missing here to fall through to the common commands
 			default:
+				switch (RxdBuffer[2]) {
+				case 'A': // NCanalog label
+					System.out.println(RxdBuffer[pRxData]);
+					char[] label = new char[16];
+					for(int i = 1; i < 17; ++i) {
+						label[i-1] = (char) RxdBuffer[pRxData+i];
+					}
+					System.out.println(new String(label));
+					break;
+				case 'D': // NCAnalog data
+					str_DebugOut debugOut = new str_DebugOut(RxdBuffer, pRxData);
+					debugOut.setAddress(SerialAbstractManager.NC_ADDRESS);
+					setChanged();
+					notifyObservers(debugOut);
+					break;
+				}
 			}
 			break;
 		case FC:
@@ -153,8 +161,8 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
                 
                  }*/
                 
-                hasChanged();
-                notifyObservers(RxdBuffer);
+//                hasChanged();
+//                notifyObservers(RxdBuffer);
                 interpretData();
 
             } else {
@@ -231,7 +239,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
            case SerialPortEvent.DATA_AVAILABLE:
                try {
                    while (inputStream.available() > 0) {
-                	   System.out.println("New data received.");
+//                	   System.out.println("New data received.");
                        Arrays.fill(readBuffer, (byte) 0);
                        int numBytes = inputStream.read(readBuffer);
                        byte[] data = Arrays.copyOfRange(readBuffer, 0, numBytes);

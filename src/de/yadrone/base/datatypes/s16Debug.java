@@ -17,6 +17,8 @@ public class s16Debug extends s16 {
     int index = 0;
     String prefix;
     public int ADDRESS;
+    
+    public s16Debug() {}
 
     public s16Debug(String name, int index, int address) {
         signed = true;
