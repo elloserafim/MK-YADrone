@@ -2,6 +2,11 @@ package de.yadrone.apps.tutorial;
 
 import de.yadrone.base.MKDrone;
 
+/**
+ * @author Ello Oliveira
+ * Class to test sending of commands
+ *
+ */
 public class TutorialSerialCommander {
 
 	/**
@@ -18,13 +23,14 @@ public class TutorialSerialCommander {
 		}
 		
 		try{
-		drone.start();
-		drone.getSerialCommandManager().setOutputStream(System.out);
-		drone.getSerialCommandManager().takeoff();
+			drone.getSerialCommandManager().setOutputStream(System.out);
+			drone.start();
+			
+			drone.getSerialCommandManager().takeoff();
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
-			drone.stop();
+			//drone.stop();
 		}
 
 	}

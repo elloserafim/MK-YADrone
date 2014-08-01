@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="lib/zxing/javase-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/RXTXcomm.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="MK-YADrone/lib/rxtx.org/win32"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="YADrone/lib/rxtx.org/win64"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>

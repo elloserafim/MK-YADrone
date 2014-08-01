@@ -11,6 +11,8 @@ public interface IMKDrone {
 	 */
 	public void start();
 	public void stop();
+	
+	public void takeOff();
 
 	SerialNavManager getSerialNavManager();
 	
