@@ -12,6 +12,9 @@ public class Encoder {
 	
     public java.io.OutputStream writer;
     
+    /**
+     * @param writer The stream the commands will be written to
+     */
     public Encoder(OutputStream writer) {
         this.writer = writer;
     }

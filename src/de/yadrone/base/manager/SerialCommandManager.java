@@ -1,26 +1,16 @@
 package de.yadrone.base.manager;
 
 import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.UnsupportedCommOperationException;
-
-
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Observable;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.PriorityBlockingQueue;
-
-import de.yadrone.base.mkdrone.command.Encoder;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 import de.yadrone.base.mkdrone.command.FCCommand;
 
 /**
  * The manager for Serial Communication with MKDrone
+ * It runs as a thread and puts the commands in a queue
  * @author Ello Oliveira and Diogo Branco
  *
  */
@@ -29,6 +19,9 @@ import de.yadrone.base.mkdrone.command.FCCommand;
 // with YADrone's design.
 public class SerialCommandManager extends SerialAbstractManager implements Runnable {
 	
+	/**
+	 *  This variable stores information about the selected port
+	 */
 	static CommPortIdentifier portId;
     static HashMap<String, CommPortIdentifier> portMap;
 	protected Thread thread = null;
@@ -43,18 +36,27 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	public SerialCommandManager(String serialPort, boolean isUSB,
 			SerialEventListener serialListener) throws Exception {
 		super(serialPort, isUSB, serialListener);
+		//Initialise the queue
 		queue = new ConcurrentLinkedQueue<FCCommand>();
+		//Initialise the input Stream to receive return of commands
 		if(serialListener.getInputStream() == null) {
 			serialListener.setInputStream(this.serialPort.getInputStream());
 		}
 	}
     
+    /**
+     * Sets the stream to which commands are send
+     * @param out The output stream
+     */
     public void setOutputStream(OutputStream out){
     	outputStream = out;
-    	this.enconder.setWriter(out);
+    	this.encoder.setWriter(out);
     }
 	
 	
+	/**
+	 * Stops the command sending thread and closes the connection
+	 */
 	public void stop(){
 		doStop = true;
 		serialPort.close();
@@ -64,7 +66,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		// TODO Auto-generated method stub
 		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 15);
 		queue.add(cmd);
-//		sendCommand(cmd);
 	}
 
 	private void sendCommand(FCCommand cmd) {
@@ -79,6 +80,9 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		
 	}
 
+	/**
+	 * Starts a thread for the serial command manager
+	 */
 	public void start() {
 		// TODO Auto-generated method stub
 		Thread thread = new Thread(this, "SerialCommManager");
@@ -92,15 +96,10 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		while(!doStop){
 			cmd = queue.poll();
 			if(cmd != null){
-				sendCommand(cmd);
+				//System.out.println("Sending command...");
+				sendCommand(cmd);	
 			}
 			System.out.println("SerialComm iteration");
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
