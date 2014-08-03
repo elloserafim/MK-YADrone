@@ -90,6 +90,11 @@ public class NaviData_t extends c_int {
 
     }
 
+	public NaviData_t(int[] rxdBuffer, int pRxData) {
+		// TODO Auto-generated constructor stub
+    	loadFromInt(rxdBuffer, pRxData);
+	}
+
 }
 
 

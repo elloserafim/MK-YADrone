@@ -22,7 +22,7 @@ public class TestSerialNavManager {
 				@Override
 				public void receivedAnalogData(str_DebugOut debug) {
 					for (s16Debug analog : debug.Analog) {
-						System.out.println(analog.getValue());
+						System.out.println("value: " + analog.getValue());
 					}
 				}
 			});
