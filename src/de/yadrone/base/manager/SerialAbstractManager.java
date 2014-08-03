@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Observable;
 import java.util.Observer;
 
 import de.yadrone.base.mkdrone.command.Encoder;
@@ -15,7 +14,7 @@ import de.yadrone.base.mkdrone.command.Encoder;
 /**
  * This abstract class contain attributes and methods common to both SerialCommandManager and SerialNavManager. 
  * Attributes and methods in this class are necessary for Serial Communication 
- * @author Ello Oliveira
+ * @author Ello Oliveira and Diogo Branco
  */
 public abstract class SerialAbstractManager implements Runnable, Observer {
 	
@@ -33,8 +32,14 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	protected SerialPort serialPort;
 	protected OutputStream outputStream;
 	protected InputStream inputStream;
+	// Encoder to send serial messages.
 	protected Encoder encoder;
+	// Flag to indicate the connection is via USB.
 	protected boolean isUSB;
+	// Flag to stop the thread.
+	protected boolean doStop;
+	// Thread which runs the manager.
+	private Thread thread;
 	
 	/**
 	 * A mapping of the serial ports and their names 
@@ -53,10 +58,8 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	// A merge of SerialComm constructor, getPorts() and initwritetoport() from "de.mylifesucks.oss.ncsimulator.
 	// protocol.SerialComm.java" with some improvements.
 	public SerialAbstractManager(String serialPortName, boolean isUSB, SerialEventListener serialListener) throws Exception {
-		
 		//Initialise portMap:
-		portMap = getPorts();
-/*		if(portMap == null) {
+		if(portMap == null) {
 			portMap = new HashMap<String, CommPortIdentifier>();
 	        Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 	        CommPortIdentifier portId;
@@ -66,13 +69,13 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	                portMap.put(portId.getName(), portId);
 	            }
 	        }
-		}*/
+		}
         if(portMap.isEmpty()) {
         	// TODO: SerialPortNotFoundException
         	throw new Exception("No serial ports were found.");
         }
         
-        //Search a port with the name passed by argument serialPortName:
+        // Search a port with the name passed by argument serialPortName.
 		if(serialPortName == null) {
 			int i = 0;
 			serialPortName = (String) portMap.keySet().toArray()[0];
@@ -89,7 +92,7 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 			throw new Exception("Serial port not found.");
 		}
 		
-		//Open the port and set its parameters:
+		// Open the port and set its parameters:
 		this.serialPort = (SerialPort) portMap.get(serialPortName).open("SimpleReadApp", 2000);
 		inputStream = this.serialPort.getInputStream();
 		this.serialPort.addEventListener(serialListener);
@@ -103,27 +106,7 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 		this.isUSB = isUSB;
 		encoder = new Encoder(outputStream);
 		serialListener.addObserver(this);
-//		buffer = new int[SerialEventListener.MAX_EMPFANGS_BUFF];
 	}
-	
-	/**
-	 * Creates a mapping of the serial ports of the system and their names 
-	 * @return The mapping of names and port identiifiers
-	 */
-	public static HashMap<String, CommPortIdentifier> getPorts() {
-        if (portMap == null) {
-            portMap = new HashMap<String, CommPortIdentifier>();
-            Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-            CommPortIdentifier portId;
-            while (portList.hasMoreElements()) {
-                portId = (CommPortIdentifier) portList.nextElement();
-                if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                    portMap.put(portId.getName(), portId);
-                }
-            }
-        }
-        return portMap;
-    }
 	
 	public SerialPort getSerialPort() {
 		return serialPort;
@@ -133,12 +116,15 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 		return isUSB;
 	}
 	
-//	public void update(Observable o, Object arg) {
-//		buffer = (int[]) arg;
-//		synchronized (this) {
-//			notify();
-//		}
-//	}
+	public boolean start() {
+		if (thread == null) {
+			doStop = false;
+			thread = new Thread(this, getClass().getSimpleName());
+			thread.start();
+			return true;
+		}
+		return false;
+	}
 	
 /*	public void stop() {
 		serialPort.close();

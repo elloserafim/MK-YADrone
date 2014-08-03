@@ -3,8 +3,6 @@ package de.yadrone.base.mkdrone.navdata;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import javax.xml.crypto.OctetStreamData;
-
 import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
 import de.yadrone.base.manager.SerialAbstractManager;
@@ -95,13 +93,6 @@ public class SerialNavManager extends SerialAbstractManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-//		if(arg instanceof str_DebugOut) {
-//			if(!ncAnalogListener.isEmpty()) {
-//				for (NCAnalogListener listener : ncAnalogListener) {
-//					listener.receivedAnalogData((str_DebugOut) arg);
-//				}
-//			}
-//		}
 	}
 
 }

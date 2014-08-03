@@ -26,7 +26,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
     static HashMap<String, CommPortIdentifier> portMap;
 	protected Thread thread = null;
 	private ConcurrentLinkedQueue<FCCommand> queue;
-	protected boolean doStop = false;
 	
 	public SerialCommandManager(boolean isUSB, SerialEventListener serialListener)
 			throws Exception {
@@ -80,15 +79,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		
 	}
 
-	/**
-	 * Starts a thread for the serial command manager
-	 */
-	public void start() {
-		// TODO Auto-generated method stub
-		Thread thread = new Thread(this, "SerialCommManager");
-		thread.start();
-	}
-
 	@Override
 	public void run() {
 		System.out.println("Running SerialCommManager");
@@ -100,15 +90,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 				sendCommand(cmd);	
 			}
 			System.out.println("SerialComm iteration");
-			
-			/*
-			  try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//*/
 		}
 	}
 
@@ -118,7 +99,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	}
 	
 	public void spinLeft() {
-		// TODO Auto-generated method stub
 		ExternControlCommand cmd = new ExternControlCommand(0, 0, -30, 15);
 		queue.add(cmd);
 	}

@@ -28,11 +28,10 @@ public class TestSerialNavManager {
 			});
 			Thread t = new Thread(manager);
 			t.start();
-			while(!t.isAlive());
+//			while(!t.isAlive());
 			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'd', new u8(100).getAsInt());
 			t.join();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
