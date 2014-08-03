@@ -13,6 +13,11 @@ public interface IMKDrone {
 	public void stop();
 	
 	public void takeOff();
+	
+//	public void forward();
+//	public void backward();
+	public void spinRight();
+	public void spinLeft();
 
 	SerialNavManager getSerialNavManager();
 	

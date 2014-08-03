@@ -25,7 +25,7 @@ public class TestSerialCommandManager {
 		
 		try{
 			//We set the output stream to print the bytes on screen
-			drone.getSerialCommandManager().setOutputStream(System.out);
+			//drone.getSerialCommandManager().setOutputStream(System.out);
 			drone.start();
 			
 			drone.getSerialCommandManager().takeoff();

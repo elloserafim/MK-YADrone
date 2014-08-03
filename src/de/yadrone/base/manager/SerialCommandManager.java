@@ -100,7 +100,27 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 				sendCommand(cmd);	
 			}
 			System.out.println("SerialComm iteration");
+			
+			/*
+			  try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//*/
 		}
+	}
+
+	public void spinRight() {
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 30, 15);
+		queue.add(cmd);
+	}
+	
+	public void spinLeft() {
+		// TODO Auto-generated method stub
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -30, 15);
+		queue.add(cmd);
 	}
 
 }
