@@ -51,7 +51,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
     
     public void setOutputStream(OutputStream out){
     	outputStream = out;
-    	this.enconder.setWriter(out);
+    	this.encoder.setWriter(out);
     }
 	
 	
