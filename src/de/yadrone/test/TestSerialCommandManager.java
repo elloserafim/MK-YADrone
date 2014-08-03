@@ -1,5 +1,6 @@
-package de.yadrone.apps.tutorial;
+package de.yadrone.test;
 
+import de.yadrone.base.IMKDrone;
 import de.yadrone.base.MKDrone;
 
 /**
@@ -7,14 +8,14 @@ import de.yadrone.base.MKDrone;
  * Class to test sending of commands
  *
  */
-public class TutorialSerialCommander {
+public class TestSerialCommandManager {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		MKDrone drone = null;
+		IMKDrone drone = null;
 		try {
 			drone = new MKDrone();
 		} catch (Exception e1) {
@@ -23,7 +24,8 @@ public class TutorialSerialCommander {
 		}
 		
 		try{
-			drone.getSerialCommandManager().setOutputStream(System.out);
+			//We set the output stream to print the bytes on screen
+			//drone.getSerialCommandManager().setOutputStream(System.out);
 			drone.start();
 			
 			drone.getSerialCommandManager().takeoff();

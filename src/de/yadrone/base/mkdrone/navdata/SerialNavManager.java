@@ -3,6 +3,9 @@ package de.yadrone.base.mkdrone.navdata;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import javax.xml.crypto.OctetStreamData;
+
+import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
 import de.yadrone.base.manager.SerialAbstractManager;
 import de.yadrone.base.manager.SerialCommandManager;
@@ -13,6 +16,8 @@ public class SerialNavManager extends SerialAbstractManager {
 	private SerialCommandManager manager;
 	
 	private ArrayList<NCAnalogListener> ncAnalogListener;
+	
+	private ArrayList<NCOSDListener> ncOSDListeners;
 	
 	private Object data = null;
 	
@@ -36,6 +41,13 @@ public class SerialNavManager extends SerialAbstractManager {
 		ncAnalogListener.add(listener);
 	}
 	
+	public void addOSDListener(NCOSDListener listener){
+		if(ncOSDListeners == null){
+			ncOSDListeners = new ArrayList<NCOSDListener>();
+		}
+		ncOSDListeners.add(listener);
+	}
+	
 	@Override
 	public void run() {
 		try {
@@ -48,6 +60,14 @@ public class SerialNavManager extends SerialAbstractManager {
 						if(!ncAnalogListener.isEmpty()) {
 							for (NCAnalogListener listener : ncAnalogListener) {
 								listener.receivedAnalogData((str_DebugOut) data);
+							}
+						}
+					}
+					
+					else if(data instanceof NaviData_t){
+						if(!ncOSDListeners.isEmpty()){
+							for(NCOSDListener listener: ncOSDListeners){
+								listener.receivedOSDData((NaviData_t) data);
 							}
 						}
 					}

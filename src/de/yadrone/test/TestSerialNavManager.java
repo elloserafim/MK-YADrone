@@ -14,7 +14,7 @@ public class TestSerialNavManager {
 	public static void main(String[] args) {
 		SerialEventListener serialListener = new SerialEventListener();
 		try {
-			SerialNavManager manager = new SerialNavManager("COM1", false, serialListener, null);
+			SerialNavManager manager = new SerialNavManager("COM2", false, serialListener, null);
 			serialListener.setInputStream(manager.getSerialPort().getInputStream());
 			Encoder encoder = new Encoder(manager.getSerialPort().getOutputStream());
 			manager.addNCAnalogListener(new NCAnalogListener() {
@@ -22,7 +22,7 @@ public class TestSerialNavManager {
 				@Override
 				public void receivedAnalogData(str_DebugOut debug) {
 					for (s16Debug analog : debug.Analog) {
-						System.out.println(analog.getValue());
+						System.out.println("value: " + analog.getValue());
 					}
 				}
 			});

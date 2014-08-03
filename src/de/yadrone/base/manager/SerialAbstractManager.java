@@ -30,14 +30,15 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
     public static final int MKOSD_ADDRESS = 4;
     public static final int BL_ADDRESS = 5;
 
-//	protected Thread thread;
-//	protected String portId; //e.g. "COM1"
 	protected SerialPort serialPort;
 	protected OutputStream outputStream;
 	protected InputStream inputStream;
 	protected Encoder encoder;
 	protected boolean isUSB;
 	
+	/**
+	 * A mapping of the serial ports and their names 
+	 */
 	protected static HashMap<String, CommPortIdentifier> portMap;
 	
 	public SerialAbstractManager(SerialPort serialPort, boolean isUSB, SerialEventListener serialListener) throws Exception {
@@ -51,8 +52,11 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	
 	// A merge of SerialComm constructor, getPorts() and initwritetoport() from "de.mylifesucks.oss.ncsimulator.
 	// protocol.SerialComm.java" with some improvements.
-	public SerialAbstractManager(String serialPort, boolean isUSB, SerialEventListener serialListener) throws Exception {
-		if(portMap == null) {
+	public SerialAbstractManager(String serialPortName, boolean isUSB, SerialEventListener serialListener) throws Exception {
+		
+		//Initialise portMap:
+		portMap = getPorts();
+/*		if(portMap == null) {
 			portMap = new HashMap<String, CommPortIdentifier>();
 	        Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 	        CommPortIdentifier portId;
@@ -62,27 +66,31 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 	                portMap.put(portId.getName(), portId);
 	            }
 	        }
-		}
+		}*/
         if(portMap.isEmpty()) {
         	// TODO: SerialPortNotFoundException
         	throw new Exception("No serial ports were found.");
         }
-		if(serialPort == null) {
+        
+        //Search a port with the name passed by argument serialPortName:
+		if(serialPortName == null) {
 			int i = 0;
-			serialPort = (String) portMap.keySet().toArray()[0];
-			CommPortIdentifier pId = portMap.get(serialPort);
+			serialPortName = (String) portMap.keySet().toArray()[0];
+			CommPortIdentifier pId = portMap.get(serialPortName);
 			while(pId.isCurrentlyOwned() && i< portMap.size()){
-				serialPort = (String) portMap.keySet().toArray()[++i];
-				pId = portMap.get(serialPort);
+				serialPortName = (String) portMap.keySet().toArray()[++i];
+				pId = portMap.get(serialPortName);
 			}
 			if(pId.isCurrentlyOwned() && i>= portMap.size()){
 				throw new Exception("All Serial ports are in use.");
 			}
-		} else if(!portMap.keySet().contains(serialPort)) {
+		} else if(!portMap.keySet().contains(serialPortName)) {
 			// TODO: SerialPortNotFoundException
 			throw new Exception("Serial port not found.");
 		}
-		this.serialPort = (SerialPort) portMap.get(serialPort).open("SimpleReadApp", 2000);
+		
+		//Open the port and set its parameters:
+		this.serialPort = (SerialPort) portMap.get(serialPortName).open("SimpleReadApp", 2000);
 		inputStream = this.serialPort.getInputStream();
 		this.serialPort.addEventListener(serialListener);
 		this.serialPort.notifyOnDataAvailable(true);
@@ -98,6 +106,10 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 //		buffer = new int[SerialEventListener.MAX_EMPFANGS_BUFF];
 	}
 	
+	/**
+	 * Creates a mapping of the serial ports of the system and their names 
+	 * @return The mapping of names and port identiifiers
+	 */
 	public static HashMap<String, CommPortIdentifier> getPorts() {
         if (portMap == null) {
             portMap = new HashMap<String, CommPortIdentifier>();

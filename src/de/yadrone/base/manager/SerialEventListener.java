@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Observable;
 
+import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
 
 import gnu.io.SerialPortEvent;
@@ -68,6 +69,10 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 					setChanged();
 					notifyObservers(debugOut);
 					break;
+				case 'O': //NC Navi data
+					NaviData_t navData = new NaviData_t(RxdBuffer, pRxData);
+					setChanged();
+					notifyObservers(navData);
 				}
 			}
 			break;
