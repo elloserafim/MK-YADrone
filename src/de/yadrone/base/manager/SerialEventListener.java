@@ -26,7 +26,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 	private int crc1;
 	private int crc2;
 	private int buf_ptr = 0;
-	private UART_CONNECTION UART;
+//	private UART_CONNECTION UART;
 	private InputStream inputStream;
 	
 	public static final int MAX_EMPFANGS_BUFF = 190;
@@ -34,7 +34,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 	
 	public SerialEventListener() {
 		UartState = 0;
-		UART = UART_CONNECTION.NC;
+//		UART = UART_CONNECTION.NC;
 	}
 	
 	private void interpretData() {
@@ -43,41 +43,40 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		}
 		int pRxData = 3; // decoded data start at the 4th byte
 		Decode64(RxdBuffer);
-		System.out.print("Decoded data: ");
-		for(int i = 0; i < RxdBuffer.length; ++i) {
-			System.out.print(RxdBuffer[i]);
-		}
-		System.out.println();
-		switch (UART) {
-		case NC:
-			switch (RxdBuffer[1] - 'a') {
-			case SerialAbstractManager.NC_ADDRESS:
-				// "break;" is missing here to fall through to the common commands
-			default:
-				switch (RxdBuffer[2]) {
-				case 'A': // NCanalog label
-					System.out.println(RxdBuffer[pRxData]);
-					char[] label = new char[16];
-					for(int i = 1; i < 17; ++i) {
-						label[i-1] = (char) RxdBuffer[pRxData+i];
-					}
-					System.out.println(new String(label));
-					break;
-				case 'D': // NCAnalog data
-					str_DebugOut debugOut = new str_DebugOut(RxdBuffer, pRxData);
-					debugOut.setAddress(SerialAbstractManager.NC_ADDRESS);
-					setChanged();
-					notifyObservers(debugOut);
-					break;
-				case 'O': //NC Navi data
-					NaviData_t navData = new NaviData_t(RxdBuffer, pRxData);
-					setChanged();
-					notifyObservers(navData);
+//		System.out.print("Decoded data: ");
+//		for(int i = 0; i < RxdBuffer.length; ++i) {
+//			System.out.print(RxdBuffer[i]);
+//		}
+//		System.out.println();
+		switch (RxdBuffer[1] - 'a') {
+		case SerialAbstractManager.NC_ADDRESS:
+			switch (RxdBuffer[2]) {
+			case 'A': // NCanalog label
+				System.out.println(RxdBuffer[pRxData]);
+				char[] label = new char[16];
+				for(int i = 1; i < 17; ++i) {
+					label[i-1] = (char) RxdBuffer[pRxData+i];
 				}
+				System.out.println(new String(label));
+				break;
+			case 'D': // NCAnalog data
+				str_DebugOut debugOut = new str_DebugOut(RxdBuffer, pRxData);
+				debugOut.setAddress(SerialAbstractManager.NC_ADDRESS);
+				setChanged();
+				notifyObservers(debugOut);
+				break;
+			case 'O': //NC Navi data
+				NaviData_t navData = new NaviData_t(RxdBuffer, pRxData);
+				setChanged();
+				notifyObservers(navData);
 			}
 			break;
-		case FC:
+		case SerialAbstractManager.FC_ADDRESS:
 			break;
+		case SerialAbstractManager.MK3MAG_ADDRESS:
+			break;
+		default:
+			
 		}
 	}
 	
@@ -206,15 +205,15 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 	
 	private void HandleInputData(byte[] data) {
 		for (int i = 0; i < data.length; i++) {
-			if (i < data.length - 5
-					&& (data[i] == 0x1B && data[i + 1] == 0x1B
-							&& data[i + 2] == 0x55 /* && data[i + 3] == 170 */&& data[i + 4] == 0x00)) {
-				i += 4;
-				setUART(UART_CONNECTION.NC);
-				UartState = 0;
-			} else {
+//			if (i < data.length - 5
+//					&& (data[i] == 0x1B && data[i + 1] == 0x1B
+//							&& data[i + 2] == 0x55 /* && data[i + 3] == 170 */&& data[i + 4] == 0x00)) {
+//				i += 4;
+//				setUART(UART_CONNECTION.NC);
+//				UartState = 0;
+//			} else {
 				USART0_RX_vect((char) data[i]);
-			}
+//			}
 		}
 	}
 
@@ -259,8 +258,8 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
        }
    }
    
-   public void setUART(UART_CONNECTION u) {
-	   UART = u;
-   }
+//   public void setUART(UART_CONNECTION u) {
+//	   UART = u;
+//   }
 
 }

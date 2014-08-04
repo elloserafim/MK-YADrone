@@ -8,6 +8,7 @@ import de.yadrone.base.datatypes.str_DebugOut;
 import de.yadrone.base.manager.SerialAbstractManager;
 import de.yadrone.base.manager.SerialCommandManager;
 import de.yadrone.base.manager.SerialEventListener;
+import de.yadrone.base.mkdrone.command.DebugRequestCommand;
 
 public class SerialNavManager extends SerialAbstractManager {
 
@@ -21,6 +22,7 @@ public class SerialNavManager extends SerialAbstractManager {
 	
 	public SerialNavManager(SerialCommandManager manager, SerialEventListener serialListener) throws Exception {
 		super(manager.getSerialPort(), manager.isUSB(), serialListener);
+		this.manager = manager;
 	}
 	
 	public SerialNavManager(String serialPort, boolean isUSB,
@@ -37,6 +39,7 @@ public class SerialNavManager extends SerialAbstractManager {
 			ncAnalogListener = new ArrayList<NCAnalogListener>();
 		}
 		ncAnalogListener.add(listener);
+		manager.sendCommand(new DebugRequestCommand(NC_ADDRESS, 100));
 	}
 	
 	public void addOSDListener(NCOSDListener listener){

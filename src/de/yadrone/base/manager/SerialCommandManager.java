@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 import de.yadrone.base.mkdrone.command.FCCommand;
+import de.yadrone.base.mkdrone.command.MKCommand;
 
 /**
  * The manager for Serial Communication with MKDrone
@@ -62,13 +63,11 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	}
 
 	public void takeoff() {
-		// TODO Auto-generated method stub
 		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 15);
 		queue.add(cmd);
 	}
 
-	private void sendCommand(FCCommand cmd) {
-		// TODO Auto-generated method stub
+	public void sendCommand(MKCommand cmd) {
 		int[]params = cmd.getParam().getAsInt();
 		this.encoder.sendCommandNoCheck((byte)cmd.getAddress(), cmd.getId(), params);
 	}
