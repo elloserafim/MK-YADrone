@@ -1,6 +1,8 @@
 package de.yadrone.test;
 
+import de.yadrone.base.datatypes.MagicPacket;
 import de.yadrone.base.datatypes.s16Debug;
+import de.yadrone.base.datatypes.s8;
 import de.yadrone.base.datatypes.str_DebugOut;
 import de.yadrone.base.datatypes.u8;
 import de.yadrone.base.manager.SerialAbstractManager;
@@ -18,19 +20,23 @@ public class TestSerialNavManager {
 			SerialCommandManager commandMan = new SerialCommandManager("COM2", false, serialListener);
 			SerialNavManager manager = new SerialNavManager(commandMan, serialListener);
 			serialListener.setInputStream(manager.getSerialPort().getInputStream());
-//			Encoder encoder = new Encoder(manager.getSerialPort().getOutputStream());
-			manager.addNCAnalogListener(new NCAnalogListener() {
-				
-				@Override
-				public void receivedAnalogData(str_DebugOut debug) {
-					for (s16Debug analog : debug.Analog) {
-						System.out.println("value: " + analog.getValue());
-					}
-				}
-			});
+			Encoder encoder = new Encoder(manager.getSerialPort().getOutputStream());
+//			manager.addNCAnalogListener(new NCAnalogListener() {
+//				
+//				@Override
+//				public void receivedAnalogData(str_DebugOut debug) {
+//					for (s16Debug analog : debug.Analog) {
+//						System.out.println("value: " + analog.getValue());
+//					}
+//				}
+//			});
 			Thread t = new Thread(manager);
 			t.start();
 //			while(!t.isAlive());
+//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] {2});
+//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new MagicPacket().getAsInt());
+//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] { 27, 27, 85, 170, 0 });
+//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] { (byte) 0x1B, (byte) 0x1B, (byte) 0x55, (byte) 0xAA, (byte) 0x00 });
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'd', new u8(100).getAsInt());
 			t.join();
 		} catch (Exception e) {

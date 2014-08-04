@@ -72,6 +72,14 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 			}
 			break;
 		case SerialAbstractManager.FC_ADDRESS:
+			switch (RxdBuffer[2]) {
+			case 'D': // NCAnalog data
+				str_DebugOut debugOut = new str_DebugOut(RxdBuffer, pRxData);
+				debugOut.setAddress(SerialAbstractManager.FC_ADDRESS);
+				setChanged();
+				notifyObservers(debugOut);
+				break;
+			}
 			break;
 		case SerialAbstractManager.MK3MAG_ADDRESS:
 			break;

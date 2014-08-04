@@ -17,7 +17,7 @@ public class MKDrone implements IMKDrone {
 	private static SerialEventListener serialListener;
 
 	public MKDrone() throws Exception {
-		this(null, true);
+		this(null, false);
 	}
 	
 	public MKDrone(String serialPort, boolean isUSB) throws Exception {
@@ -43,7 +43,8 @@ public class MKDrone implements IMKDrone {
 
 	public void start() {
 		try {
-			getSerialCommandManager().start();
+			serialCommManager.start();
+			serialNavManager.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -55,11 +56,9 @@ public class MKDrone implements IMKDrone {
 
 	@Override
 	public void takeOff() {
-		// TODO Auto-generated method stub
-		if(serialCommManager !=null){
+		if(serialCommManager != null){
 			serialCommManager.takeoff();
 		}
-		
 	}
 
 	@Override

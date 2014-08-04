@@ -1,10 +1,13 @@
 package de.yadrone.base.datatypes;
 
 public class s8 extends c_int {
+	
     public s8(String name) {
-        signed = true;
-        length = 8;
-        this.name = name;
+    	this(name, 0);
+    }
+    
+    public s8(long value) {
+    	this(null, value);
     }
     
     public s8(String name, long value) {

@@ -59,7 +59,8 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	 */
 	public void stop(){
 		doStop = true;
-		serialPort.close();
+		// serialPort is a shared resource; needs checking before closing.
+//		serialPort.close();
 	}
 
 	public void takeoff() {
@@ -78,6 +79,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		
 	}
 
+	// TODO wait if the queue is empty.
 	@Override
 	public void run() {
 		System.out.println("Running SerialCommManager");
@@ -88,7 +90,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 				//System.out.println("Sending command...");
 				sendCommand(cmd);	
 			}
-			System.out.println("SerialComm iteration");
+//			System.out.println("SerialComm iteration");
 		}
 	}
 
