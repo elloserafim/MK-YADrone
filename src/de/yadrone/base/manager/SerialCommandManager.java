@@ -94,14 +94,22 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		}
 	}
 
-	public void spinRight() {
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, 30, 15);
+	public void spinRight(int speed) {
+		//TODO should the throttle argument be the current throttle?
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, 15);
 		queue.add(cmd);
 	}
 	
-	public void spinLeft() {
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, -30, 15);
+	public void spinLeft(int speed) {
+		//TODO should the throttle argument be the current throttle?
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, 15);
 		queue.add(cmd);
+	}
+
+	public void forward(int speed) {
+		//TODO should the throttle argument be the current throttle?
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, 15);
+		
 	}
 
 }

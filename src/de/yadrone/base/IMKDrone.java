@@ -12,12 +12,27 @@ public interface IMKDrone {
 	public void start();
 	public void stop();
 	
+	/**
+	 * Sets drone throttle to a minimum
+	 */
 	public void takeOff();
 	
-//	public void forward();
-//	public void backward();
-	public void spinRight();
-	public void spinLeft();
+	/**
+	 * @param speed range -127 to 127
+	 */
+	public void forward(int speed);
+	/**
+	 * @param speed range -127 to 127
+	 */
+	public void backward(int speed);
+	/**
+	 * @param speed range -127 to 127
+	 */
+	public void spinRight(int speed);
+	/**
+	 * @param speed range -127 to 127
+	 */
+	public void spinLeft(int speed);
 
 	SerialNavManager getSerialNavManager();
 	

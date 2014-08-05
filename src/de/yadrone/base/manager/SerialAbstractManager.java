@@ -138,4 +138,7 @@ public abstract class SerialAbstractManager implements Runnable, Observer {
 //		}
 //	}
 
+    public OutputStream getOutputStream(){
+    	return outputStream;
+    }
 }
