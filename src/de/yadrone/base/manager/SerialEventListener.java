@@ -7,6 +7,7 @@ import java.util.Observable;
 
 import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
+import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
@@ -67,6 +68,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 				break;
 			case 'O': //NC Navi data
 				NaviData_t navData = new NaviData_t(RxdBuffer, pRxData);
+				FlightInfo.naviData = navData;
 				setChanged();
 				notifyObservers(navData);
 			}

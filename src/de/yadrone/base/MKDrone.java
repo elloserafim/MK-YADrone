@@ -85,7 +85,34 @@ public class MKDrone implements IMKDrone {
 	@Override
 	public void backward(int speed) {
 		if(serialCommManager != null)
-			serialCommManager.forward(speed);
+			serialCommManager.backward(speed);
+		
+	}
+
+	@Override
+	public void landing() {
+		if(serialCommManager != null)
+			serialCommManager.landing();
+	}
+
+	@Override
+	public void freeze() {
+		if(serialCommManager != null)
+			serialCommManager.freeze();
+		
+	}
+
+	@Override
+	public void goRight(int speed) {
+		if(serialCommManager != null)
+			serialCommManager.roll(-speed);
+		
+	}
+
+	@Override
+	public void goLeft(int speed) {
+		if(serialCommManager != null)
+			serialCommManager.roll(speed);
 		
 	}
 

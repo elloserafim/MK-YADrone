@@ -18,22 +18,36 @@ public interface IMKDrone {
 	public void takeOff();
 	
 	/**
-	 * @param speed range -127 to 127
+	 * @param speed range 0 to 127
 	 */
 	public void forward(int speed);
 	/**
-	 * @param speed range -127 to 127
+	 * @param speed range 0 to 127
 	 */
 	public void backward(int speed);
 	/**
-	 * @param speed range -127 to 127
+	 * @param speed range 0 to 127
 	 */
 	public void spinRight(int speed);
 	/**
-	 * @param speed range -127 to 127
+	 * @param speed range 0 to 127
 	 */
 	public void spinLeft(int speed);
 
+	public void landing();
+	
+	/**
+	 * @param speed range 0 to 127
+	 */
+	public void goRight(int speed);
+	
+	/**
+	 * @param speed range 0 to 127
+	 */
+	public void goLeft(int speed);
+	
+	public void freeze();
+	
 	SerialNavManager getSerialNavManager();
 	
 	

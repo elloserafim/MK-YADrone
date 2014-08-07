@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 import de.yadrone.base.mkdrone.command.FCCommand;
 import de.yadrone.base.mkdrone.command.MKCommand;
+import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 
 /**
  * The manager for Serial Communication with MKDrone
@@ -96,20 +97,57 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 
 	public void spinRight(int speed) {
 		//TODO should the throttle argument be the current throttle?
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, 15);
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, (int)throttle );
 		queue.add(cmd);
 	}
 	
 	public void spinLeft(int speed) {
 		//TODO should the throttle argument be the current throttle?
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, 15);
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, (int) throttle);
 		queue.add(cmd);
 	}
 
 	public void forward(int speed) {
 		//TODO should the throttle argument be the current throttle?
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, 15);
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, (int) throttle);
+		queue.add(cmd);
 		
 	}
+	
+	public void backward(int speed) {
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, (int) throttle);
+		queue.add(cmd);
+		
+	}
+
+	public void landing() {
+		// TODO Test if drone falls abruptly or softly descends
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 0);
+		queue.add(cmd);
+	}
+
+	public void freeze() {
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, (int) throttle);
+		queue.add(cmd);
+	}
+
+	/**
+	 * Move the drone left or right
+	 * @param speed value between -128 and 127.
+	 * We assume positive values to the left and negative to the right
+	 */
+	public void roll(int speed) {
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, speed, 0, (int) throttle);
+		queue.add(cmd);
+		
+	}
+
+
 
 }
