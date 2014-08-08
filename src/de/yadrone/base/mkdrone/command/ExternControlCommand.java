@@ -10,8 +10,9 @@ import de.yadrone.base.datatypes.str_ExternControl;
 public class ExternControlCommand extends FCCommand {
 	
 
-	public ExternControlCommand(int pitch, int roll, int yaw, int throtle){
+	public ExternControlCommand(int pitch, int roll, int yaw, int throtle, boolean sticky){
 		param = new str_ExternControl(pitch, roll, yaw, throtle);
 		id = 'b';
+		this.sticky = sticky;
 	}
 }

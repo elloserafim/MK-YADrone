@@ -123,8 +123,26 @@ public class c_int {
     	return value;
     }
     
-    public void setValue(long value) {
-    	this.value = value;
+    /**
+     * Sets the value, checking if the value set is between min and max. 
+     * @param value The value to be set
+     * @throws Exception If the value is out of the range
+     */
+    public void setAndCheckValue(long value) throws Exception {
+    	if(minValue != null && maxValue != null){
+    		if(inRange(value))
+    			this.value = value;
+    		else throw new Exception("Out of range");
+    	}
+    	else{
+    		this.value = value;
+    	}
+    }
+    
+    private boolean inRange(long value){
+    	if(minValue == null || maxValue == null)
+    		return true;
+    	return (value >= minValue && value<=maxValue);
     }
 
 }

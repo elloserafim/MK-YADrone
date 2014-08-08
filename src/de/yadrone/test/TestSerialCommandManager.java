@@ -31,9 +31,15 @@ public class TestSerialCommandManager {
 			//We set the output stream to print the bytes on screen
 			//drone.getSerialCommandManager().setOutputStream(System.out);
 			drone.start();
+			System.out.println("takeoff");
+			drone.takeOff();
+			System.out.println("split left");
+			drone.getSerialCommandManager().spinLeft(20).doFor(3000);
+			System.out.println("freeze");
+			drone.getSerialCommandManager().freeze().doFor(3000);
+			System.out.println("land");
+			drone.landing();
 			
-			drone.getSerialCommandManager().takeoff();
-			drone.getSerialCommandManager().spinLeft(20);
 			drone.getSerialNavManager().addOSDListener(new NCOSDListener() {
 				
 				@Override
@@ -44,13 +50,15 @@ public class TestSerialCommandManager {
 					
 				}
 			});
-			Encoder encoder = new Encoder(drone.getSerialCommandManager().getOutputStream());
-			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
-					new int[] { 10 });
+			
+//			Encoder encoder = new Encoder(drone.getSerialCommandManager().getOutputStream());	
+//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
+//					new int[] { 10 });
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
-			//drone.stop();
+//			drone.stop();
 		}
 
 	}

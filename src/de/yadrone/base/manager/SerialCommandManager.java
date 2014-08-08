@@ -5,6 +5,10 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+
+import de.yadrone.base.ardrone.command.CommandManager;
+import de.yadrone.base.exception.CommandException;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 import de.yadrone.base.mkdrone.command.FCCommand;
 import de.yadrone.base.mkdrone.command.MKCommand;
@@ -65,7 +69,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	}
 
 	public void takeoff() {
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 15);
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 15, true);
 		queue.add(cmd);
 	}
 
@@ -80,60 +84,105 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		
 	}
 
+	/**
+	 * <li> Sticky commands need to be send continuously.
+	 * <li> New sticky commands replace previous one
+	 * <li> 
+	 * @see java.lang.Runnable#run()
+	 */
 	// TODO wait if the queue is empty.
 	@Override
 	public void run() {
 		System.out.println("Running SerialCommManager");
-		FCCommand cmd;
+		FCCommand cmdToSend = null;
+		FCCommand newCmd = null;
+		FCCommand stickyCmd = null;
+		
+		//Command-send loop
 		while(!doStop){
-			cmd = queue.poll();
-			if(cmd != null){
-				//System.out.println("Sending command...");
-				sendCommand(cmd);	
+			newCmd = queue.poll();
+			
+			if(newCmd == null){
+//				no new command to send. Resend sticky command, if there is one.
+				if(stickyCmd != null)
+					cmdToSend = stickyCmd;
 			}
-//			System.out.println("SerialComm iteration");
+			else{
+//				A new commmand to send
+				System.out.println("new command arriving");
+				cmdToSend = newCmd;
+				if(newCmd.isSticky()) //If new command is sticky, replace previous sticky command
+					stickyCmd = newCmd;
+				else
+					stickyCmd = null;
+			}
+			if(cmdToSend != null)
+			{
+//				System.out.println("Sending command " + cmdToSend.getTitle());
+				sendCommand(cmdToSend);
+			}
+			cmdToSend = null;
 		}
+
+//		while(!doStop){
+//			cmd = queue.poll();
+//			if(cmd != null){
+//				//System.out.println("Sending command...");
+//				sendCommand(cmd);	
+//			}
+////			System.out.println("SerialComm iteration");
+//		}
 	}
 
-	public void spinRight(int speed) {
+	public SerialCommandManager spinRight(int speed) {
 		//TODO should the throttle argument be the current throttle?
 		long throttle = FlightInfo.naviData.Gas.getValue();
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, (int)throttle );
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, (int)throttle, true );
+		cmd.setTitle("spin right");
 		queue.add(cmd);
+		return this;
 	}
 	
-	public void spinLeft(int speed) {
+	public SerialCommandManager spinLeft(int speed) {
 		//TODO should the throttle argument be the current throttle?
 		long throttle = FlightInfo.naviData.Gas.getValue();
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, (int) throttle);
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, (int) throttle, true);
+		cmd.setTitle("spin left");
 		queue.add(cmd);
+		return this;
 	}
 
-	public void forward(int speed) {
+	public SerialCommandManager forward(int speed) {
 		//TODO should the throttle argument be the current throttle?
 		long throttle = FlightInfo.naviData.Gas.getValue();
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, (int) throttle);
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, speed, (int) throttle, true);
+		cmd.setTitle("forward");
 		queue.add(cmd);
-		
+		return this;
 	}
 	
-	public void backward(int speed) {
+	public SerialCommandManager backward(int speed) {
 		long throttle = FlightInfo.naviData.Gas.getValue();
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, (int) throttle);
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, -speed, (int) throttle, true);
+		cmd.setTitle("backward");
 		queue.add(cmd);
-		
+		return this;
 	}
 
-	public void landing() {
+	public SerialCommandManager landing() {
 		// TODO Test if drone falls abruptly or softly descends
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 0);
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 0, false);
+		cmd.setTitle("landing");
 		queue.add(cmd);
+		return this;
 	}
 
-	public void freeze() {
+	public SerialCommandManager freeze() {
 		long throttle = FlightInfo.naviData.Gas.getValue();
-		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, (int) throttle);
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, (int) throttle, true);
+		cmd.setTitle("freeze");
 		queue.add(cmd);
+		return this;
 	}
 
 	/**
@@ -141,13 +190,47 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	 * @param speed value between -128 and 127.
 	 * We assume positive values to the left and negative to the right
 	 */
-	public void roll(int speed) {
+	public SerialCommandManager roll(int speed) {
 		long throttle = FlightInfo.naviData.Gas.getValue();
-		ExternControlCommand cmd = new ExternControlCommand(0, speed, 0, (int) throttle);
+		ExternControlCommand cmd = new ExternControlCommand(0, speed, 0, (int) throttle, true);
+		cmd.setTitle("roll");
 		queue.add(cmd);
-		
+		return this;
 	}
 
+	/**
+	 * Wait (sleep) for specified amount of time (same semantics as after() and waitFor() - 
+	 * blocks the calling thread).
+	 * This way commands can be executed for a certain amount of time, e.g. fly forward for 2000 ms, then turn right.
+	 * @param millis  Number of milliseconds to wait
+	 */
+	public SerialCommandManager doFor(long millis)
+	{
+		return waitFor(millis);
+	}
+	
+	/**
+	 * Wait (sleep) for specified amount of time (same semantics as doFor() and waitFor() - blocks the calling thread).
+	 * This way commands can be executed for a certain amount of time, e.g. fly forward for 2000 ms, then turn right.
+	 * @param millis  Number of milliseconds to wait
+	 */
+	public SerialCommandManager after(long millis)
+	{
+		return waitFor(millis);
+	}
+
+	private SerialCommandManager waitFor(long millis) {
+		try
+		{
+			Thread.sleep(millis);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return this;
+	}
 
 
 }

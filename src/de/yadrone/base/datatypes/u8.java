@@ -27,6 +27,7 @@ public class u8 extends c_int {
         signed = false;
         length = 8;
         this.name = name;
+        this.minValue = 0;
         this.maxValue=new Integer(maxValue);
     }
 
@@ -40,6 +41,7 @@ public class u8 extends c_int {
 		} else {
 			this.name = name;
 		}
+		this.minValue = 0;
 		this.maxValue = new Integer(maxValue);
 	}
 }
