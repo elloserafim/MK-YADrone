@@ -46,8 +46,8 @@ public interface IMKDrone {
 	 */
 	public void goLeft(int speed);
 	
-//	public void up();
-//	public void down();
+	public void up(int value);
+	public void down(int value);
 	
 	public void freeze();
 	

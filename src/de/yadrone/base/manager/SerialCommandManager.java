@@ -98,6 +98,10 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		FCCommand newCmd = null;
 		FCCommand stickyCmd = null;
 		
+		//Request for OSD-data
+		encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
+		new int[] { 10 });
+		
 		//Command-send loop
 		while(!doStop){
 			newCmd = queue.poll();
@@ -122,8 +126,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 				sendCommand(cmdToSend);
 			}
 			cmdToSend = null;
-//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
-//					new int[] { 10 });
+
 		}
 
 //		while(!doStop){
@@ -232,6 +235,15 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		}
 		
 		return this;
+	}
+
+	public SerialCommandManager moveVertically(int value) {
+		long throttle = FlightInfo.naviData.Gas.getValue();
+		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, (int) throttle+value, true);
+		cmd.setTitle("move vertically");
+		queue.add(cmd);
+		return this;
+		
 	}
 
 

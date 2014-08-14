@@ -116,4 +116,18 @@ public class MKDrone implements IMKDrone {
 		
 	}
 
+	@Override
+	public void up(int value) {
+		if(serialCommManager != null)
+			serialCommManager.moveVertically(value);
+		
+	}
+
+	@Override
+	public void down(int value) {
+		if(serialCommManager != null)
+			serialCommManager.moveVertically(-value);
+		
+	}
+
 }

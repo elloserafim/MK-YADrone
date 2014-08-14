@@ -43,18 +43,14 @@ public class TestSerialCommandManager {
 			drone.start();
 			System.out.println("takeoff");
 			drone.takeOff();
+			
+			drone.up(30);
 			System.out.println("split left");
 			drone.getSerialCommandManager().spinLeft(20).doFor(3000);
 			System.out.println("freeze");
 			drone.getSerialCommandManager().freeze().doFor(3000);
 			System.out.println("land");
 			drone.landing();
-			
-
-			System.out.println("Send OSD");
-			Encoder encoder = new Encoder(drone.getSerialCommandManager().getOutputStream());	
-			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
-					new int[] { 10 });
 			
 		}catch(Exception e){
 			e.printStackTrace();
