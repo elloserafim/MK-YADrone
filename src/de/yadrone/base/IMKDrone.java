@@ -46,6 +46,9 @@ public interface IMKDrone {
 	 */
 	public void goLeft(int speed);
 	
+//	public void up();
+//	public void down();
+	
 	public void freeze();
 	
 	SerialNavManager getSerialNavManager();

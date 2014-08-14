@@ -26,6 +26,16 @@ public class TestSerialCommandManager {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		drone.getSerialNavManager().addOSDListener(new NCOSDListener() {
+			
+			@Override
+			public void receivedOSDData(NaviData_t navData) {
+				System.out.println("Gas:" + navData.Gas.getValue());
+				System.out.println("Heading:" + navData.Heading.getValue());
+				System.out.println("Nick:" + navData.AngleNick.getValue());
+				
+			}
+		});
 		
 		try{
 			//We set the output stream to print the bytes on screen
@@ -40,20 +50,11 @@ public class TestSerialCommandManager {
 			System.out.println("land");
 			drone.landing();
 			
-			drone.getSerialNavManager().addOSDListener(new NCOSDListener() {
-				
-				@Override
-				public void receivedOSDData(NaviData_t navData) {
-					System.out.println("Gas:" + navData.Gas.getValue());
-					System.out.println("Heading:" + navData.Heading.getValue());
-					System.out.println("Nick:" + navData.AngleNick.getValue());
-					
-				}
-			});
-			
-//			Encoder encoder = new Encoder(drone.getSerialCommandManager().getOutputStream());	
-//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
-//					new int[] { 10 });
+
+			System.out.println("Send OSD");
+			Encoder encoder = new Encoder(drone.getSerialCommandManager().getOutputStream());	
+			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
+					new int[] { 10 });
 			
 		}catch(Exception e){
 			e.printStackTrace();

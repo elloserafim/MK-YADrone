@@ -39,9 +39,9 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 	}
 	
 	private void interpretData() {
-		if (!NeuerDatensatzEmpfangen) {
-			return;
-		}
+//		if (!NeuerDatensatzEmpfangen) {
+//			return;
+//		}
 		int pRxData = 3; // decoded data start at the 4th byte
 		Decode64(RxdBuffer);
 //		System.out.print("Decoded data: ");
@@ -148,23 +148,25 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
             UartState = 0;
 //            System.out.println("overflow");
         }
-        if (SioTmp == '\r' && UartState == 2) {
+      if (SioTmp == '\r' && UartState == 2) {
+        	System.out.println("r1");
             UartState = 0;
-            crc -= RxdBuffer[buf_ptr - 2];
+            crc -= RxdBuffer[buf_ptr - 2];     
             crc -= RxdBuffer[buf_ptr - 1];
             crc %= 4096;
             crc1 = '=' + crc / 64;
             crc2 = '=' + crc % 64;
             CrcOkay = false;
+            
             if ((crc1 == RxdBuffer[buf_ptr - 2]) && (crc2 == RxdBuffer[buf_ptr - 1])) {
                 CrcOkay = true;
             } else {
                 CrcOkay = false;
-
             }
+
             if (!NeuerDatensatzEmpfangen && CrcOkay) { // Datensatz schon verarbeitet
 
-                NeuerDatensatzEmpfangen = true;
+//                NeuerDatensatzEmpfangen = true;
                 AnzahlEmpfangsBytes = buf_ptr + 1;
                 RxdBuffer[buf_ptr] = '\r';
 
@@ -177,6 +179,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
                 
 //                hasChanged();
 //                notifyObservers(RxdBuffer);
+                System.out.println("Interpret data");
                 interpretData();
 
             } else {
@@ -186,13 +189,13 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
             switch (UartState) {
                 case 0:
                     if (SioTmp == '#' && !NeuerDatensatzEmpfangen) {
-                        UartState = 1;  // Startzeichen und Daten schon verarbeitet
+                        UartState = 1;  // Startzeichen und Daten schon verarbeitet. Already processed start character and data.
                     }
                     buf_ptr = 0;
                     RxdBuffer[buf_ptr++] = SioTmp;
                     crc = SioTmp;
                     break;
-                case 1: // Adresse auswerten
+                case 1: // Adresse auswerten / evaluate address 
                     UartState++;
                     RxdBuffer[buf_ptr++] = SioTmp;
                     crc += SioTmp;

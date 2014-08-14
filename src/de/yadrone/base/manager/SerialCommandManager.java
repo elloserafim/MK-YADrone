@@ -109,7 +109,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 			}
 			else{
 //				A new commmand to send
-				System.out.println("new command arriving");
+				System.out.println("new command in the queue");
 				cmdToSend = newCmd;
 				if(newCmd.isSticky()) //If new command is sticky, replace previous sticky command
 					stickyCmd = newCmd;
@@ -122,6 +122,8 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 				sendCommand(cmdToSend);
 			}
 			cmdToSend = null;
+//			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
+//					new int[] { 10 });
 		}
 
 //		while(!doStop){
