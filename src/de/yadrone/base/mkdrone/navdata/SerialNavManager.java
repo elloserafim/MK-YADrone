@@ -21,56 +21,80 @@ public class SerialNavManager extends SerialAbstractManager {
 	
 	private Object data = null;
 	
-	public SerialNavManager(SerialCommandManager manager, SerialEventListener serialListener) throws Exception {
-		super(manager.getSerialPort(), manager.isUSB(), serialListener);
+	/**
+	 * Constructor for SerialNavManager. It uses the {@link SerialCommandManager}
+	 * to queue some commands it needs to send, depending on the listeners added
+	 * later. It registers as an observer of the {@link SerialEventListener},
+	 * receiving then the data that arrives from said listener.
+	 * @param manager manager to queue messages 
+	 * @param serialListener serial event listener to receive data from
+	 */
+	public SerialNavManager(SerialCommandManager manager, SerialEventListener serialListener) {
+		serialListener.addObserver(this);
 		this.manager = manager;
 	}
 	
-	public SerialNavManager(String serialPort, boolean isUSB,
-			SerialEventListener serialListener, SerialCommandManager manager) throws Exception {
-		super(serialPort, isUSB, serialListener);
-		this.manager = manager;
-		if(serialListener.getInputStream() == null) {
-			serialListener.setInputStream(this.serialPort.getInputStream());
-		}
-	}
-	
+	/**
+	 * Adds a NCAnalog listener to this manager.
+	 * @param listener A defined {@link NCAnalogListener} interface.
+	 */
 	public void addNCAnalogListener(NCAnalogListener listener) {
 		if(ncAnalogListeners == null) {
 			ncAnalogListeners = new ArrayList<NCAnalogListener>();
 		}
 		ncAnalogListeners.add(listener);
-		manager.sendCommand(new DebugRequestCommand(NC_ADDRESS, 100));
+		manager.queueCommand(new DebugRequestCommand(NC_ADDRESS, 100));
 	}
 	
+	/**
+	 * Adds a FCAnalog listener to this manager.
+	 * @param listener A defined {@link FCAnalogListener} interface.
+	 */
 	public void addFCAnalogListener(FCAnalogListener listener) {
 		if(fcAnalogListeners == null) {
 			fcAnalogListeners = new ArrayList<FCAnalogListener>();
 		}
 		fcAnalogListeners.add(listener);
-		manager.sendCommand(new DebugRequestCommand(FC_ADDRESS, 100));
+		manager.queueCommand(new DebugRequestCommand(FC_ADDRESS, 100));
 	}
 	
+	/**
+	 * Adds an OSD listener to this manager.
+	 * @param listener A defined {@link NCOSDListener} interface.
+	 */
 	public void addOSDListener(NCOSDListener listener) {
 		if(ncOSDListeners == null){
 			ncOSDListeners = new ArrayList<NCOSDListener>();
 		}
 		ncOSDListeners.add(listener);
 	}
-	
-	// TODO address for NC
+
+	/**
+	 * Queues a "Redirect UART" message to the {@link SerialCommandManager}.
+	 * 
+	 * @param address
+	 *            The available addresses are: FC, MK3MAG, MKGPS and NC.
+	 */
 	public void redirectUART(String address) {
-		long value = -1; // default is NC
+		long value = -1;
 		if(address.equals("FC")) {
 			value = 0;
 		} else if(address.equals("MK3MAG")) {
 			value = 1;
 		} else if(address.equals("MKGPS")) {
 			value = 2;
+		} else if(address.equals("NC")) {
+			value = 4;
+		} else {
+			return;
 		}
-		manager.sendCommand(new RedirectUARTCommand(value));
+		manager.queueCommand(new RedirectUARTCommand(value));
 	}
 	
+	/**
+	 * Main method for this manager. This is where it gets the interpreted
+	 * data and passes them to the proper listeners.
+	 */
 	@Override
 	public void run() {
 		while (!doStop) {
@@ -110,6 +134,12 @@ public class SerialNavManager extends SerialAbstractManager {
 
 	}
 
+	/**
+	 * Update method for this Observer. The {@link SerialEventListener}
+	 * sends the received and interpreted data through this method, since
+	 * this manager observes the SerialEventListener passed as argument
+	 * in the constructor.
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		try {
@@ -123,6 +153,19 @@ public class SerialNavManager extends SerialAbstractManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Stops the data processing thread.
+	 * @return True if the manager stopped, false if the manager was not
+	 * running when this function was called. 
+	 */
+	public boolean stop() {
+		if(!doStop) {
+			doStop = true;
+			return true;
+		}
+		return false;
 	}
 
 }

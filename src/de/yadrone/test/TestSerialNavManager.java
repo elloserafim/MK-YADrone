@@ -17,28 +17,30 @@ public class TestSerialNavManager {
 	public static void main(String[] args) {
 		SerialEventListener serialListener = new SerialEventListener();
 		try {
-			SerialCommandManager commandMan = new SerialCommandManager("COM2", false, serialListener);
-			SerialNavManager manager = new SerialNavManager(commandMan, serialListener);
-			serialListener.setInputStream(manager.getSerialPort().getInputStream());
-			Encoder encoder = new Encoder(manager.getSerialPort().getOutputStream());
-//			manager.addNCAnalogListener(new NCAnalogListener() {
-//				
-//				@Override
-//				public void receivedAnalogData(str_DebugOut debug) {
-//					for (s16Debug analog : debug.Analog) {
-//						System.out.println("value: " + analog.getValue());
-//					}
-//				}
-//			});
-			Thread t = new Thread(manager);
-			t.start();
-//			while(!t.isAlive());
+			SerialCommandManager cmdManager = new SerialCommandManager("COM2", false, serialListener);
+			SerialNavManager navManager = new SerialNavManager(cmdManager, serialListener);
+			serialListener.setInputStream(cmdManager.getSerialPort().getInputStream());
+//			Encoder encoder = new Encoder(cmdManager.getSerialPort().getOutputStream());
+			navManager.addNCAnalogListener(new NCAnalogListener() {
+				
+				@Override
+				public void receivedAnalogData(str_DebugOut debug) {
+					for (s16Debug analog : debug.Analog) {
+						System.out.println("value: " + analog.getValue());
+					}
+				}
+			});
+			cmdManager.start();
+			navManager.start();
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] {2});
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new MagicPacket().getAsInt());
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] { 27, 27, 85, 170, 0 });
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] { (byte) 0x1B, (byte) 0x1B, (byte) 0x55, (byte) 0xAA, (byte) 0x00 });
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'd', new u8(100).getAsInt());
-			t.join();
+			navManager.stop();
+			cmdManager.stop();
+			navManager.join();
+			cmdManager.join();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

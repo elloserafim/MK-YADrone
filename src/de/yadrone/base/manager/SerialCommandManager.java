@@ -1,7 +1,10 @@
 package de.yadrone.base.manager;
 
 import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+
 import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -9,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.yadrone.base.ardrone.command.CommandManager;
 import de.yadrone.base.exception.CommandException;
+import de.yadrone.base.mkdrone.command.Encoder;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 import de.yadrone.base.mkdrone.command.FCCommand;
 import de.yadrone.base.mkdrone.command.MKCommand;
@@ -25,55 +29,109 @@ import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 // with YADrone's design.
 public class SerialCommandManager extends SerialAbstractManager implements Runnable {
 	
+	protected SerialPort serialPort;
+	/** Encoder to send serial messages. */
+	protected Encoder encoder;
+	/** Flag to indicate the connection is via USB. */
+	protected boolean isUSB;
 	/**
 	 *  This variable stores information about the selected port
 	 */
 	static CommPortIdentifier portId;
     static HashMap<String, CommPortIdentifier> portMap;
-	protected Thread thread = null;
-	private ConcurrentLinkedQueue<FCCommand> queue;
+	private ConcurrentLinkedQueue<MKCommand> queue;
 	
 	public SerialCommandManager(boolean isUSB, SerialEventListener serialListener)
 			throws Exception {
 		this(null, isUSB, serialListener);
 	}
 
-	public SerialCommandManager(String serialPort, boolean isUSB,
+	public SerialCommandManager(String serialPortName, boolean isUSB,
 			SerialEventListener serialListener) throws Exception {
-		super(serialPort, isUSB, serialListener);
+		//Initialise portMap:
+		if(portMap == null) {
+			portMap = new HashMap<String, CommPortIdentifier>();
+	        Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+	        CommPortIdentifier portId;
+	        while (portList.hasMoreElements()) {
+	            portId = (CommPortIdentifier) portList.nextElement();
+	            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+	                portMap.put(portId.getName(), portId);
+	            }
+	        }
+		}
+        if(portMap.isEmpty()) {
+        	// TODO: SerialPortNotFoundException
+        	throw new Exception("No serial ports were found.");
+        }
+        
+        // Search a port with the name passed by argument serialPortName.
+		if(serialPortName == null) {
+			int i = 0;
+			serialPortName = (String) portMap.keySet().toArray()[0];
+			CommPortIdentifier pId = portMap.get(serialPortName);
+			while(pId.isCurrentlyOwned() && i< portMap.size()){
+				serialPortName = (String) portMap.keySet().toArray()[++i];
+				pId = portMap.get(serialPortName);
+			}
+			if(pId.isCurrentlyOwned() && i>= portMap.size()){
+				throw new Exception("All Serial ports are in use.");
+			}
+		} else if(!portMap.keySet().contains(serialPortName)) {
+			// TODO: SerialPortNotFoundException
+			throw new Exception("Serial port not found.");
+		}
+		
+		// Open the port and set its parameters:
+		this.serialPort = (SerialPort) portMap.get(serialPortName).open("SimpleReadApp", 2000);
+		this.serialPort.addEventListener(serialListener);
+		this.serialPort.notifyOnDataAvailable(true);
+		this.serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8,
+				SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		if(!isUSB) {
+			this.serialPort.notifyOnOutputEmpty(true);
+		}
+		this.isUSB = isUSB;
+		encoder = new Encoder(this.serialPort.getOutputStream());
+		serialListener.addObserver(this);
 		//Initialise the queue
-		queue = new ConcurrentLinkedQueue<FCCommand>();
+		queue = new ConcurrentLinkedQueue<MKCommand>();
 		//Initialise the input Stream to receive return of commands
 		if(serialListener.getInputStream() == null) {
 			serialListener.setInputStream(this.serialPort.getInputStream());
 		}
 	}
-    
-    /**
-     * Sets the stream to which commands are send
-     * @param out The output stream
-     */
-    public void setOutputStream(OutputStream out){
-    	outputStream = out;
-    	this.encoder.setWriter(out);
-    }
 	
+	public SerialPort getSerialPort() {
+		return serialPort;
+	}
+	
+	public boolean isUSB() {
+		return isUSB;
+	}
 	
 	/**
 	 * Stops the command sending thread and closes the connection
 	 */
-	public void stop(){
-		doStop = true;
-		// serialPort is a shared resource; needs checking before closing.
-//		serialPort.close();
+	public boolean stop(){
+		if(!doStop) {
+			doStop = true;
+			serialPort.close();
+			return true;
+		}
+		return false;
 	}
 
 	public void takeoff() {
 		ExternControlCommand cmd = new ExternControlCommand(0, 0, 0, 15, true);
 		queue.add(cmd);
 	}
+	
+	public boolean queueCommand(MKCommand cmd) {
+		return queue.add(cmd);
+	}
 
-	public void sendCommand(MKCommand cmd) {
+	private void sendCommand(MKCommand cmd) {
 		int[]params = cmd.getParam().getAsInt();
 		this.encoder.sendCommandNoCheck((byte)cmd.getAddress(), cmd.getId(), params);
 	}
@@ -90,13 +148,12 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 	 * <li> 
 	 * @see java.lang.Runnable#run()
 	 */
-	// TODO wait if the queue is empty.
 	@Override
 	public void run() {
 		System.out.println("Running SerialCommManager");
-		FCCommand cmdToSend = null;
-		FCCommand newCmd = null;
-		FCCommand stickyCmd = null;
+		MKCommand cmdToSend = null;
+		MKCommand newCmd = null;
+		MKCommand stickyCmd = null;
 		
 		//Request for OSD-data
 		encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
@@ -115,7 +172,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 //				A new commmand to send
 				System.out.println("new command in the queue");
 				cmdToSend = newCmd;
-				if(newCmd.isSticky()) //If new command is sticky, replace previous sticky command
+				if(newCmd instanceof FCCommand && ((FCCommand) newCmd).isSticky()) //If new command is sticky, replace previous sticky command
 					stickyCmd = newCmd;
 				else
 					stickyCmd = null;

@@ -12,6 +12,12 @@ import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
+/**
+ * This class listens and handles incoming serial events under a suitable
+ * input stream.
+ * @author Diogo Branco
+ *
+ */
 public class SerialEventListener extends Observable implements SerialPortEventListener {
 
 	public static enum UART_CONNECTION {
@@ -53,7 +59,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		case SerialAbstractManager.NC_ADDRESS:
 			switch (RxdBuffer[2]) {
 			case 'A': // NCanalog label
-				System.out.println(RxdBuffer[pRxData]);
+//				System.out.println(RxdBuffer[pRxData]);
 				char[] label = new char[16];
 				for(int i = 1; i < 17; ++i) {
 					label[i-1] = (char) RxdBuffer[pRxData+i];
@@ -149,7 +155,7 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 //            System.out.println("overflow");
         }
       if (SioTmp == '\r' && UartState == 2) {
-        	System.out.println("r1");
+//        	System.out.println("r1");
             UartState = 0;
             crc -= RxdBuffer[buf_ptr - 2];     
             crc -= RxdBuffer[buf_ptr - 1];
@@ -179,7 +185,6 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
                 
 //                hasChanged();
 //                notifyObservers(RxdBuffer);
-                System.out.println("Interpret data");
                 interpretData();
 
             } else {

@@ -6,7 +6,7 @@ import de.yadrone.base.datatypes.s8;
 public class RedirectUARTCommand extends NCCommand {
 
 	public RedirectUARTCommand(long address) {
-		if(address < 0) {
+		if(address == 4) {
 			this.param = new MagicPacket();
 		} else {
 			this.param = new s8(address);

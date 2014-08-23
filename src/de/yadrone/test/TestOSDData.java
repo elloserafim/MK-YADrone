@@ -2,6 +2,7 @@ package de.yadrone.test;
 
 import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.manager.SerialAbstractManager;
+import de.yadrone.base.manager.SerialCommandManager;
 import de.yadrone.base.manager.SerialEventListener;
 import de.yadrone.base.mkdrone.command.Encoder;
 import de.yadrone.base.mkdrone.navdata.NCOSDListener;
@@ -12,13 +13,13 @@ public class TestOSDData {
 	public static void main(String[] args) {
 		SerialEventListener serialListener = new SerialEventListener();
 		try {
-			SerialNavManager manager;
-			manager = new SerialNavManager("COM2", false, serialListener, null);
-			serialListener.setInputStream(manager.getSerialPort()
+			SerialCommandManager cmdManager = new SerialCommandManager("COM2", false, serialListener);
+			SerialNavManager navManager = new SerialNavManager(cmdManager, serialListener);
+			serialListener.setInputStream(cmdManager.getSerialPort()
 					.getInputStream());
-			Encoder encoder = new Encoder(manager.getSerialPort()
+			Encoder encoder = new Encoder(cmdManager.getSerialPort()
 					.getOutputStream());
-			manager.addOSDListener(new NCOSDListener() {
+			navManager.addOSDListener(new NCOSDListener() {
 
 				@Override
 				public void receivedOSDData(NaviData_t navData) {
@@ -26,7 +27,7 @@ public class TestOSDData {
 
 				}
 			});
-			Thread t = new Thread(manager);
+			Thread t = new Thread(navManager);
 			t.start();
 //			while (!t.isAlive());
 			System.out.println("Sending request");
