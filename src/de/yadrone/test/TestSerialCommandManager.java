@@ -3,7 +3,9 @@ package de.yadrone.test;
 import de.yadrone.base.IMKDrone;
 import de.yadrone.base.MKDrone;
 import de.yadrone.base.datatypes.NaviData_t;
+import de.yadrone.base.datatypes.str_VersionInfo;
 import de.yadrone.base.manager.SerialAbstractManager;
+import de.yadrone.base.manager.VersionListener;
 import de.yadrone.base.mkdrone.command.Encoder;
 import de.yadrone.base.mkdrone.navdata.NCOSDListener;
 
@@ -37,10 +39,24 @@ public class TestSerialCommandManager {
 			}
 		});
 		
+		drone.getSerialNavManager().addVersionListener(new VersionListener() {
+			
+			@Override
+			public void receivedVersionInfo(str_VersionInfo versionInfo) {
+				System.out.println(versionInfo.getPrefix());
+				System.out.println(versionInfo.SWMajor.getValue());
+				System.out.println(versionInfo.SWMinor.getValue());
+				
+			}
+		});
 		try{
 			//We set the output stream to print the bytes on screen
 			//drone.getSerialCommandManager().setOutputStream(System.out);
 			drone.start();
+			
+			System.out.println("request version");
+			drone.getSerialCommandManager().requestFCVersion();
+			
 			System.out.println("takeoff");
 			drone.takeOff();
 			
@@ -51,7 +67,7 @@ public class TestSerialCommandManager {
 			drone.getSerialCommandManager().freeze().doFor(3000);
 			System.out.println("land");
 			drone.landing();
-			
+			System.out.println("Finished");
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{

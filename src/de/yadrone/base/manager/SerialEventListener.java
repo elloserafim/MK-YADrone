@@ -7,6 +7,7 @@ import java.util.Observable;
 
 import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
+import de.yadrone.base.datatypes.str_VersionInfo;
 import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 
 import gnu.io.SerialPortEvent;
@@ -58,25 +59,25 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 		switch (RxdBuffer[1] - 'a') {
 		case SerialAbstractManager.NC_ADDRESS:
 			switch (RxdBuffer[2]) {
-			case 'A': // NCanalog label
-//				System.out.println(RxdBuffer[pRxData]);
-				char[] label = new char[16];
-				for(int i = 1; i < 17; ++i) {
-					label[i-1] = (char) RxdBuffer[pRxData+i];
-				}
-				System.out.println(new String(label));
-				break;
-			case 'D': // NCAnalog data
-				str_DebugOut debugOut = new str_DebugOut(RxdBuffer, pRxData);
-				debugOut.setAddress(SerialAbstractManager.NC_ADDRESS);
-				setChanged();
-				notifyObservers(debugOut);
-				break;
-			case 'O': //NC Navi data
-				NaviData_t navData = new NaviData_t(RxdBuffer, pRxData);
-				FlightInfo.naviData = navData;
-				setChanged();
-				notifyObservers(navData);
+				case 'A': // NCanalog label
+	//				System.out.println(RxdBuffer[pRxData]);
+					char[] label = new char[16];
+					for(int i = 1; i < 17; ++i) {
+						label[i-1] = (char) RxdBuffer[pRxData+i];
+					}
+					System.out.println(new String(label));
+					break;
+				case 'D': // NCAnalog data
+					str_DebugOut debugOut = new str_DebugOut(RxdBuffer, pRxData);
+					debugOut.setAddress(SerialAbstractManager.NC_ADDRESS);
+					setChanged();
+					notifyObservers(debugOut);
+					break;
+				case 'O': //NC Navi data
+					NaviData_t navData = new NaviData_t(RxdBuffer, pRxData);
+					FlightInfo.naviData = navData;
+					setChanged();
+					notifyObservers(navData);
 			}
 			break;
 		case SerialAbstractManager.FC_ADDRESS:
@@ -91,8 +92,29 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 			break;
 		case SerialAbstractManager.MK3MAG_ADDRESS:
 			break;
-		default:
-			
+		
+		}
+		switch (RxdBuffer[2]) {
+		case 'V': // Version Data
+			str_VersionInfo versionInfo;
+			switch(RxdBuffer[1]-'a'){
+			case SerialAbstractManager.NC_ADDRESS:
+				versionInfo = new str_VersionInfo(RxdBuffer, pRxData, "NC");
+				break;
+			case SerialAbstractManager.FC_ADDRESS:
+				versionInfo = new str_VersionInfo(RxdBuffer, pRxData, "FC");
+				break;
+			case SerialAbstractManager.MK3MAG_ADDRESS:
+				versionInfo = new str_VersionInfo(RxdBuffer, pRxData, "MKMAG");
+				break;
+			default:
+				versionInfo = new str_VersionInfo(RxdBuffer, pRxData, "");
+				break;
+				
+			}
+			setChanged();
+			notifyObservers(versionInfo);
+			break;
 		}
 	}
 	
@@ -191,33 +213,33 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
                 System.out.println("NeuerDatensatzEmpfangen: " + NeuerDatensatzEmpfangen + " CrcOkay: " + CrcOkay);
             }
         } else {
-            switch (UartState) {
-                case 0:
-                    if (SioTmp == '#' && !NeuerDatensatzEmpfangen) {
-                        UartState = 1;  // Startzeichen und Daten schon verarbeitet. Already processed start character and data.
-                    }
-                    buf_ptr = 0;
-                    RxdBuffer[buf_ptr++] = SioTmp;
-                    crc = SioTmp;
-                    break;
-                case 1: // Adresse auswerten / evaluate address 
-                    UartState++;
-                    RxdBuffer[buf_ptr++] = SioTmp;
-                    crc += SioTmp;
-                    break;
-                case 2: //  Eingangsdaten sammeln
-                    RxdBuffer[buf_ptr] = SioTmp;
-                    if (buf_ptr < MAX_EMPFANGS_BUFF) {
-                        buf_ptr++;
-                    } else {
-                        UartState = 0;
-                    }
-                    crc += SioTmp;
-                    break;
-                default:
-                    UartState = 0;
-                    break;
-            }
+        	switch (UartState) {
+        	case 0:
+        		if (SioTmp == '#' && !NeuerDatensatzEmpfangen) {
+        			UartState = 1;  // Startzeichen und Daten schon verarbeitet. Already processed start character and data.
+        		}
+        		buf_ptr = 0;
+        		RxdBuffer[buf_ptr++] = SioTmp;
+        		crc = SioTmp;
+        		break;
+        	case 1: // Adresse auswerten / evaluate address 
+        		UartState++;
+        		RxdBuffer[buf_ptr++] = SioTmp;
+        		crc += SioTmp;
+        		break;
+        	case 2: //  Eingangsdaten sammeln
+        		RxdBuffer[buf_ptr] = SioTmp;
+        		if (buf_ptr < MAX_EMPFANGS_BUFF) {
+        			buf_ptr++;
+        		} else {
+        			UartState = 0;
+        		}
+        		crc += SioTmp;
+        		break;
+        	default:
+        		UartState = 0;
+        		break;
+        	}
         }
     }
 	

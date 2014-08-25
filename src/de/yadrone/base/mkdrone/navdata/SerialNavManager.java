@@ -5,9 +5,11 @@ import java.util.Observable;
 
 import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
+import de.yadrone.base.datatypes.str_VersionInfo;
 import de.yadrone.base.manager.SerialAbstractManager;
 import de.yadrone.base.manager.SerialCommandManager;
 import de.yadrone.base.manager.SerialEventListener;
+import de.yadrone.base.manager.VersionListener;
 import de.yadrone.base.mkdrone.command.DebugRequestCommand;
 import de.yadrone.base.mkdrone.command.RedirectUARTCommand;
 
@@ -18,6 +20,7 @@ public class SerialNavManager extends SerialAbstractManager {
 	private ArrayList<NCAnalogListener> ncAnalogListeners;
 	private ArrayList<FCAnalogListener> fcAnalogListeners;
 	private ArrayList<NCOSDListener> ncOSDListeners;
+	private ArrayList<VersionListener> versionListeners;
 	
 	private Object data = null;
 	
@@ -67,6 +70,13 @@ public class SerialNavManager extends SerialAbstractManager {
 			ncOSDListeners = new ArrayList<NCOSDListener>();
 		}
 		ncOSDListeners.add(listener);
+	}
+	
+	public void addVersionListener(VersionListener listener){
+		if(versionListeners == null){
+			versionListeners = new ArrayList<VersionListener>();
+		}
+		versionListeners.add(listener);
 	}
 
 	/**
@@ -119,6 +129,13 @@ public class SerialNavManager extends SerialAbstractManager {
 						if (ncOSDListeners != null && !ncOSDListeners.isEmpty()) {
 							for (NCOSDListener listener : ncOSDListeners) {
 								listener.receivedOSDData((NaviData_t) data);
+							}
+						}
+					}
+					else if(data instanceof str_VersionInfo){
+						if(versionListeners !=null && !versionListeners.isEmpty() ){
+							for(VersionListener listener : versionListeners){
+								listener.receivedVersionInfo((str_VersionInfo)data);
 							}
 						}
 					}

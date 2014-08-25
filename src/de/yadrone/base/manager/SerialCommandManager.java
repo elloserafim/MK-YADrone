@@ -16,6 +16,7 @@ import de.yadrone.base.mkdrone.command.Encoder;
 import de.yadrone.base.mkdrone.command.ExternControlCommand;
 import de.yadrone.base.mkdrone.command.FCCommand;
 import de.yadrone.base.mkdrone.command.MKCommand;
+import de.yadrone.base.mkdrone.command.VersionRequestCommand;
 import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 
 /**
@@ -83,7 +84,9 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		}
 		
 		// Open the port and set its parameters:
+		System.out.println("Connecting to port " + serialPortName);
 		this.serialPort = (SerialPort) portMap.get(serialPortName).open("SimpleReadApp", 2000);
+		
 		this.serialPort.addEventListener(serialListener);
 		this.serialPort.notifyOnDataAvailable(true);
 		this.serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8,
@@ -156,8 +159,8 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		MKCommand stickyCmd = null;
 		
 		//Request for OSD-data
-		encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
-		new int[] { 10 });
+//		encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
+//		new int[] { 10 });
 		
 		//Command-send loop
 		while(!doStop){
@@ -300,6 +303,12 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		cmd.setTitle("move vertically");
 		queue.add(cmd);
 		return this;
+		
+	}
+
+	public void requestFCVersion() {
+		VersionRequestCommand cmd = new VersionRequestCommand(FC_ADDRESS);
+		queue.add(cmd);
 		
 	}
 
