@@ -3,15 +3,20 @@ package de.yadrone.base.mkdrone.navdata;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import de.yadrone.base.datatypes.GPS_Pos_t;
 import de.yadrone.base.datatypes.NaviData_t;
+import de.yadrone.base.datatypes.Waypoint_t;
 import de.yadrone.base.datatypes.str_DebugOut;
 import de.yadrone.base.datatypes.str_VersionInfo;
+import de.yadrone.base.datatypes.u8;
 import de.yadrone.base.manager.SerialAbstractManager;
 import de.yadrone.base.manager.SerialCommandManager;
 import de.yadrone.base.manager.SerialEventListener;
 import de.yadrone.base.manager.VersionListener;
 import de.yadrone.base.mkdrone.command.DebugRequestCommand;
 import de.yadrone.base.mkdrone.command.RedirectUARTCommand;
+import de.yadrone.base.mkdrone.command.WPSendingCommand;
+import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 
 public class SerialNavManager extends SerialAbstractManager {
 
@@ -21,6 +26,7 @@ public class SerialNavManager extends SerialAbstractManager {
 	private ArrayList<FCAnalogListener> fcAnalogListeners;
 	private ArrayList<NCOSDListener> ncOSDListeners;
 	private ArrayList<VersionListener> versionListeners;
+	private ArrayList<WaypointsNumberListener>  wpListeners;
 	
 	private Object data = null;
 	
@@ -78,6 +84,13 @@ public class SerialNavManager extends SerialAbstractManager {
 		}
 		versionListeners.add(listener);
 	}
+	
+	public void addNumberWaypointsListener(WaypointsNumberListener listener){
+		if(wpListeners == null){
+			wpListeners = new ArrayList<WaypointsNumberListener>();
+		}
+		wpListeners.add(listener);
+	}
 
 	/**
 	 * Queues a "Redirect UART" message to the {@link SerialCommandManager}.
@@ -99,6 +112,20 @@ public class SerialNavManager extends SerialAbstractManager {
 			return;
 		}
 		manager.queueCommand(new RedirectUARTCommand(value));
+	}
+	
+	public void addWayPoint(int latitude, int longitude, int altitude){
+		//TODO To test: WaypointNumber or WaypointIndex?
+		int numWayPoints = (int)FlightInfo.naviData.WaypointNumber.getValue();
+		Waypoint_t wayPoint = new Waypoint_t("WP", ++numWayPoints, (new GPS_Pos_t("WP", latitude, longitude, altitude)));
+		try {
+			FlightInfo.naviData.WaypointNumber.setAndCheckValue(numWayPoints);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		WPSendingCommand cmd = new WPSendingCommand(wayPoint);
+		manager.queueCommand(cmd);
 	}
 	
 	/**
@@ -136,6 +163,13 @@ public class SerialNavManager extends SerialAbstractManager {
 						if(versionListeners !=null && !versionListeners.isEmpty() ){
 							for(VersionListener listener : versionListeners){
 								listener.receivedVersionInfo((str_VersionInfo)data);
+							}
+						}
+					}
+					else if(data instanceof u8 && ((u8) data).getName() == "WPNumber"){
+						if(wpListeners !=null && !wpListeners.isEmpty()){
+							for(WaypointsNumberListener listener : wpListeners){
+								listener.receivedWaypointsNumber((u8) data);
 							}
 						}
 					}

@@ -54,6 +54,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 			portMap = new HashMap<String, CommPortIdentifier>();
 	        Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 	        CommPortIdentifier portId;
+	        
 	        while (portList.hasMoreElements()) {
 	            portId = (CommPortIdentifier) portList.nextElement();
 	            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
@@ -159,8 +160,8 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 		MKCommand stickyCmd = null;
 		
 		//Request for OSD-data
-//		encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
-//		new int[] { 10 });
+		encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'o',
+		new int[] { 10 });
 		
 		//Command-send loop
 		while(!doStop){
@@ -173,7 +174,7 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 			}
 			else{
 //				A new commmand to send
-				System.out.println("new command in the queue");
+//				System.out.println("new command in the queue");
 				cmdToSend = newCmd;
 				if(newCmd instanceof FCCommand && ((FCCommand) newCmd).isSticky()) //If new command is sticky, replace previous sticky command
 					stickyCmd = newCmd;
@@ -189,14 +190,6 @@ public class SerialCommandManager extends SerialAbstractManager implements Runna
 
 		}
 
-//		while(!doStop){
-//			cmd = queue.poll();
-//			if(cmd != null){
-//				//System.out.println("Sending command...");
-//				sendCommand(cmd);	
-//			}
-////			System.out.println("SerialComm iteration");
-//		}
 	}
 
 	public SerialCommandManager spinRight(int speed) {

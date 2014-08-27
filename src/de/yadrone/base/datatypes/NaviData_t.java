@@ -38,9 +38,9 @@ public class NaviData_t extends c_int {
     public u8 UBat = new u8("UBat",255); // Battery Voltage in 0.1 Volts
     public u16 GroundSpeed = new u16("GroundSpeed"); // speed over ground in cm/s (2D)
     public s16 Heading = new s16("Heading",-180,180); // current flight direction in � as angle to north
-    public s16 CompassHeading = new s16("CompassHeading",0,359); // current compass value in �
-    public s8 AngleNick = new s8("AngleNick",-359,359); // current Nick angle in 1�
-    public s8 AngleRoll = new s8("AngleRoll",-359,359); // current Rick angle in 1�
+    public s16 CompassHeading = new s16("CompassHeading",0,359); // current compass value in degrees
+    public s8 AngleNick = new s8("AngleNick",-359,359); // current Nick angle in 1 degree
+    public s8 AngleRoll = new s8("AngleRoll",-359,359); // current Rick angle in 1 degree
     public u8 RC_Quality = new u8("RC_Quality"); // RC_Quality
     public u8Flags FCFlags = new u8Flags("FCFlags", FC_FLAGS); // Flags from FC
     public u8Flags NCFlags = new u8Flags("NCFlags", NC_FLAGS); // Flags from NC

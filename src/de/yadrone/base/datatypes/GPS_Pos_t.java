@@ -24,6 +24,20 @@ public class GPS_Pos_t extends c_int {
 
     public static final String[] GPS_FLAGS = {"INVALID", "NEWDATA", "PROCESSED", "", "", "", "", ""};
 
+    public GPS_Pos_t(String prefix, int latitude, int longitude, int altitude){
+    	super();
+    	name = prefix;
+    	Longitude = new s32(prefix + " Longitude", longitude); // in 1E-7 deg
+    	Latitude = new s32(prefix + " Latitude", latitude); // in 1E-7 deg
+    	Altitude = new s32(prefix + " Altitude", altitude); // in mm
+    	Status = new u8Flags(prefix + " Status", GPS_FLAGS); // validity of data
+    	Status.value= Waypoint_t.NEWDATA;
+    	allAttribs = new LinkedList<c_int>();
+    	allAttribs.add(Longitude);
+        allAttribs.add(Latitude);
+        allAttribs.add(Altitude);
+        allAttribs.add(Status);
+    }
     public GPS_Pos_t(String prefix) {
         super();
         name = prefix;
@@ -38,11 +52,11 @@ public class GPS_Pos_t extends c_int {
         allAttribs.add(Status);
     }
 
-    @Override
-    public int[] getAsInt() {
-        int[] ret = c_int.concatArray(Longitude.getAsInt(), Latitude.getAsInt());
-        ret = c_int.concatArray(ret, Altitude.getAsInt());
-        ret = c_int.concatArray(ret, Status.getAsInt());
-        return ret;
-    }
+//    @Override
+//    public int[] getAsInt() {
+//        int[] ret = c_int.concatArray(Longitude.getAsInt(), Latitude.getAsInt());
+//        ret = c_int.concatArray(ret, Altitude.getAsInt());
+//        ret = c_int.concatArray(ret, Status.getAsInt());
+//        return ret;
+//    }
 }

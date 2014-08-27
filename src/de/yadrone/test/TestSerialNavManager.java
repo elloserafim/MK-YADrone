@@ -9,6 +9,7 @@ import de.yadrone.base.manager.SerialAbstractManager;
 import de.yadrone.base.manager.SerialCommandManager;
 import de.yadrone.base.manager.SerialEventListener;
 import de.yadrone.base.mkdrone.command.Encoder;
+import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 import de.yadrone.base.mkdrone.navdata.NCAnalogListener;
 import de.yadrone.base.mkdrone.navdata.SerialNavManager;
 
@@ -21,17 +22,19 @@ public class TestSerialNavManager {
 			SerialNavManager navManager = new SerialNavManager(cmdManager, serialListener);
 			serialListener.setInputStream(cmdManager.getSerialPort().getInputStream());
 //			Encoder encoder = new Encoder(cmdManager.getSerialPort().getOutputStream());
-			navManager.addNCAnalogListener(new NCAnalogListener() {
-				
-				@Override
-				public void receivedAnalogData(str_DebugOut debug) {
-					for (s16Debug analog : debug.Analog) {
-						System.out.println("value: " + analog.getValue());
-					}
-				}
-			});
+//			navManager.addNCAnalogListener(new NCAnalogListener() {
+//				
+//				@Override
+//				public void receivedAnalogData(str_DebugOut debug) {
+//					for (s16Debug analog : debug.Analog) {
+//						System.out.println("value: " + analog.getValue());
+//					}
+//				}
+//			});
 			cmdManager.start();
 			navManager.start();
+//			navManager.addWayPoint(51378423, -23458060, (int)FlightInfo.naviData.Altimeter.getValue());
+//			navManager.addWayPoint(59999999, -29999999, (int)FlightInfo.naviData.Altimeter.getValue());
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] {2});
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new MagicPacket().getAsInt());
 //			encoder.sendCommand(SerialAbstractManager.NC_ADDRESS, 'u', new int[] { 27, 27, 85, 170, 0 });

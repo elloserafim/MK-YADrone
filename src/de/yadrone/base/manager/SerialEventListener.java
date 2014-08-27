@@ -8,6 +8,7 @@ import java.util.Observable;
 import de.yadrone.base.datatypes.NaviData_t;
 import de.yadrone.base.datatypes.str_DebugOut;
 import de.yadrone.base.datatypes.str_VersionInfo;
+import de.yadrone.base.datatypes.u8;
 import de.yadrone.base.mkdrone.flightdata.FlightInfo;
 
 import gnu.io.SerialPortEvent;
@@ -78,6 +79,12 @@ public class SerialEventListener extends Observable implements SerialPortEventLi
 					FlightInfo.naviData = navData;
 					setChanged();
 					notifyObservers(navData);
+					break;
+				case 'W': //Waypoint number
+					u8 wayPointsNumber = new u8(RxdBuffer, pRxData, "WPNumber");
+					FlightInfo.naviData.WaypointNumber = wayPointsNumber;
+					setChanged();
+					notifyObservers(wayPointsNumber);
 			}
 			break;
 		case SerialAbstractManager.FC_ADDRESS:

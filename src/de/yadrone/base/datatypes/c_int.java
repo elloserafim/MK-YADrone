@@ -144,5 +144,9 @@ public class c_int {
     		return true;
     	return (value >= minValue && value<=maxValue);
     }
+    
+    public String getName(){
+    	return name;
+    }
 
 }

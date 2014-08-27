@@ -2,6 +2,10 @@ package de.yadrone.base.mkdrone.command;
 
 import java.io.OutputStream;
 
+import com.xuggle.mediatool.demos.ConcatenateAudioAndVideo;
+
+import de.yadrone.base.datatypes.c_int;
+
 
 
 /**
@@ -144,7 +148,6 @@ public class Encoder {
                 out += (char) (tmp_crc / 64 + '=');
                 out += (char) (tmp_crc % 64 + '=');
                 out += '\r';
-
 
             } catch (Exception e) { // problem sending data to FC
             	System.out.println("Problem sending data");

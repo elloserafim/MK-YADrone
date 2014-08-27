@@ -44,4 +44,10 @@ public class u8 extends c_int {
 		this.minValue = 0;
 		this.maxValue = new Integer(maxValue);
 	}
+
+	public u8(int[] rxdBuffer, int pRxData, String name) {
+		this();
+		loadFromInt(rxdBuffer, pRxData);
+		this.name = name;
+	}
 }
